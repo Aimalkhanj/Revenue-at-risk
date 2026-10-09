@@ -1,0 +1,3 @@
+data_raw/*.xlsx
+data/*.parquet
+__pycache__/

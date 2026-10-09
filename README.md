@@ -4,6 +4,8 @@
 
 **One answer:** £601K of annual revenue sits with 601 repeat customers who are overdue for their next order, 35.8% of last year's customers never came back, and three targeted fixes are worth **£255K — 1.6× this year's entire sales growth.**
 
+**Live dashboard:** https://YOUR-USERNAME.github.io/revenue-at-risk/
+
 ![Dashboard](images/dashboard.png)
 
 ---
@@ -62,6 +64,7 @@ sql/kpis_and_cohorts.sql      core SQL models
 src/02_analysis.py            runs the SQL + all analyses → data/outputs/*.csv, data/dashboard_data.json
 src/03_build_dashboard.py     injects results into dashboard/template.html
 dashboard/revenue-at-risk.html  the finished dashboard (open in any browser)
+index.html                    same dashboard, served as the live GitHub Pages site
 ```
 
 **Run it**

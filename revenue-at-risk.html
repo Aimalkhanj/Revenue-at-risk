@@ -1,0 +1,836 @@
+<title>Revenue at Risk</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap">
+<style>
+/* Layout: one fixed Finnova-style frame. Top bar with a dark pill slicer, a title row,
+   a constant KPI row, then one view area whose content swaps when a slicer tab is clicked. */
+:root{
+  --bg:#E9E8F2; --board:#F6F6FB; --card:#FFFFFF; --line:#ECEBF4; --line-2:#E1E0EC;
+  --ink:#16162A; --ink-2:#4F4F68; --muted:#8C8CA3;
+  --accent:#5B4DF2; --accent-2:#8B80F8; --accent-soft:#E5E2FE; --accent-softer:#F2F0FF; --on-accent:#FFFFFF;
+  --panel:#1E1F33; --panel-2:#2A2B45; --panel-3:#34355A; --panel-ink:#F4F4FB; --panel-muted:#A3A4C0;
+  --good:#18925F; --good-soft:#E3F5EC; --bad:#D93D42; --bad-soft:#FCE8E8; --warn:#B7740C; --warn-soft:#FBF0DC;
+  --grid:#EFEEF6; --base:#B4B3CB; --shadow:0 1px 2px rgba(30,31,51,.04),0 8px 24px rgba(30,31,51,.05);
+  --font:"Plus Jakarta Sans",ui-sans-serif,system-ui,-apple-system,"Segoe UI",Roboto,sans-serif;
+  --r-xl:28px; --r-lg:22px; --r-md:16px; --r-sm:12px;
+  /* crystal glass */
+  --glass:rgba(255,255,255,.5); --glass-strong:rgba(255,255,255,.66); --glass-brd:rgba(255,255,255,.85); --glass-hi:rgba(255,255,255,.95);
+  --sheen:rgba(255,255,255,.65); --glass-dark:rgba(22,20,48,.74); --glass-dark-2:rgba(255,255,255,.07); --glass-dark-brd:rgba(255,255,255,.14);
+  --glass-shadow:0 1px 0 rgba(255,255,255,.9) inset,0 18px 40px -18px rgba(52,36,160,.35);
+  --orb-1:rgba(139,128,248,.7); --orb-2:rgba(108,168,255,.55); --orb-3:rgba(244,160,214,.55); --orb-4:rgba(120,224,214,.45);
+}
+@media (prefers-color-scheme: dark){:root:not([data-theme="light"]){
+  --bg:#0B0B13; --board:#12121C; --card:#1A1A29; --line:#26263A; --line-2:#30304A;
+  --ink:#F1F1F8; --ink-2:#C0C0D6; --muted:#8D8DA8;
+  --accent:#7E73FF; --accent-2:#A29AFF; --accent-soft:#2D2A5C; --accent-softer:#201E40; --on-accent:#FFFFFF;
+  --panel:#08080F; --panel-2:#1B1B2E; --panel-3:#28284A; --panel-ink:#F4F4FB; --panel-muted:#9C9DBA;
+  --good:#3CC48B; --good-soft:#16352A; --bad:#FF6F73; --bad-soft:#3D1D22; --warn:#F0B44C; --warn-soft:#3A2D14;
+  --grid:#24243A; --base:#5E5E7C; --shadow:0 1px 2px rgba(0,0,0,.3),0 8px 24px rgba(0,0,0,.25);
+  --glass:rgba(34,32,66,.46); --glass-strong:rgba(34,32,66,.66); --glass-brd:rgba(255,255,255,.12); --glass-hi:rgba(255,255,255,.16);
+  --sheen:rgba(255,255,255,.10); --glass-dark:rgba(6,6,16,.62); --glass-dark-2:rgba(255,255,255,.06); --glass-dark-brd:rgba(255,255,255,.10);
+  --glass-shadow:0 1px 0 rgba(255,255,255,.08) inset,0 18px 40px -18px rgba(0,0,0,.7);
+  --orb-1:rgba(110,92,255,.45); --orb-2:rgba(40,110,255,.32); --orb-3:rgba(220,80,180,.26); --orb-4:rgba(40,190,180,.22); color-scheme:dark}}
+:root[data-theme="dark"]{
+  --bg:#0B0B13; --board:#12121C; --card:#1A1A29; --line:#26263A; --line-2:#30304A;
+  --ink:#F1F1F8; --ink-2:#C0C0D6; --muted:#8D8DA8;
+  --accent:#7E73FF; --accent-2:#A29AFF; --accent-soft:#2D2A5C; --accent-softer:#201E40; --on-accent:#FFFFFF;
+  --panel:#08080F; --panel-2:#1B1B2E; --panel-3:#28284A; --panel-ink:#F4F4FB; --panel-muted:#9C9DBA;
+  --good:#3CC48B; --good-soft:#16352A; --bad:#FF6F73; --bad-soft:#3D1D22; --warn:#F0B44C; --warn-soft:#3A2D14;
+  --grid:#24243A; --base:#5E5E7C; --shadow:0 1px 2px rgba(0,0,0,.3),0 8px 24px rgba(0,0,0,.25);
+  --glass:rgba(34,32,66,.46); --glass-strong:rgba(34,32,66,.66); --glass-brd:rgba(255,255,255,.12); --glass-hi:rgba(255,255,255,.16);
+  --sheen:rgba(255,255,255,.10); --glass-dark:rgba(6,6,16,.62); --glass-dark-2:rgba(255,255,255,.06); --glass-dark-brd:rgba(255,255,255,.10);
+  --glass-shadow:0 1px 0 rgba(255,255,255,.08) inset,0 18px 40px -18px rgba(0,0,0,.7);
+  --orb-1:rgba(110,92,255,.45); --orb-2:rgba(40,110,255,.32); --orb-3:rgba(220,80,180,.26); --orb-4:rgba(40,190,180,.22); color-scheme:dark}
+
+*{box-sizing:border-box}
+body{background:var(--bg);color:var(--ink);font-family:var(--font);font-size:14px;line-height:1.45;padding-inline:16px;padding-block:12px;-webkit-font-smoothing:antialiased}
+.num{font-variant-numeric:tabular-nums}
+:focus-visible{outline:2px solid var(--accent);outline-offset:2px}
+button{font:inherit;color:inherit}
+.board{position:relative;isolation:isolate;overflow:hidden;max-width:1440px;margin:0 auto;background:var(--board);border-radius:var(--r-xl);padding:16px clamp(14px,2vw,26px) 18px;display:flex;flex-direction:column;gap:14px;box-shadow:var(--shadow)}
+
+.aurora{position:absolute;inset:0;z-index:-1;pointer-events:none;overflow:hidden;border-radius:inherit}
+.aurora i{position:absolute;border-radius:50%;width:62vmax;height:62vmax;opacity:1}
+.aurora i:nth-child(1){left:-18vmax;top:-26vmax;background:radial-gradient(closest-side,var(--orb-1),transparent)}
+.aurora i:nth-child(2){right:-20vmax;top:-12vmax;background:radial-gradient(closest-side,var(--orb-2),transparent)}
+.aurora i:nth-child(3){left:18vmax;bottom:-34vmax;background:radial-gradient(closest-side,var(--orb-3),transparent)}
+.aurora i:nth-child(4){right:2vmax;bottom:-30vmax;width:44vmax;height:44vmax;background:radial-gradient(closest-side,var(--orb-4),transparent)}
+@media (prefers-reduced-motion:no-preference){
+  .aurora i{animation:drift 26s ease-in-out infinite alternate}
+  .aurora i:nth-child(2){animation-duration:32s;animation-delay:-8s}
+  .aurora i:nth-child(3){animation-duration:38s;animation-delay:-14s}
+  .aurora i:nth-child(4){animation-duration:30s;animation-delay:-4s}
+  @keyframes drift{0%{transform:translate(0,0) scale(1)}50%{transform:translate(6vmax,4vmax) scale(1.08)}100%{transform:translate(-5vmax,2vmax) scale(.96)}}
+}
+.glass{background:linear-gradient(135deg,var(--sheen),transparent 42%),var(--glass);border:1px solid var(--glass-brd);box-shadow:var(--glass-shadow);-webkit-backdrop-filter:blur(18px) saturate(170%);backdrop-filter:blur(18px) saturate(170%)}
+.glass-dark{background:linear-gradient(135deg,rgba(255,255,255,.10),transparent 40%),var(--glass-dark);border:1px solid var(--glass-dark-brd);box-shadow:0 1px 0 rgba(255,255,255,.10) inset,0 24px 50px -22px rgba(20,10,80,.55);-webkit-backdrop-filter:blur(22px) saturate(160%);backdrop-filter:blur(22px) saturate(160%)}
+
+/* top bar */
+.top{display:flex;align-items:center;gap:12px;flex-wrap:wrap}
+.brand{display:flex;align-items:center;gap:10px;margin-right:auto}
+.brand b{font-size:16px;font-weight:800;letter-spacing:.02em;display:block;line-height:1.1}
+.brand span{font-size:11px;color:var(--muted)}
+.fy{height:38px;padding:0 10px;border-radius:12px;display:grid;place-items:center;font-weight:700;font-size:12px}
+.nav{display:flex;gap:4px;padding:5px;border-radius:999px;overflow-x:auto;max-width:100%;scrollbar-width:none}
+.nav button{white-space:nowrap;border:0;background:transparent;color:var(--panel-ink);font-size:12.5px;font-weight:500;padding:8px 15px;border-radius:999px;cursor:pointer;display:flex;align-items:center;gap:6px}
+.nav button:hover{background:var(--panel-3)}
+.nav button[aria-selected="true"]{background:var(--accent);color:var(--on-accent)}
+.tools{display:flex;gap:8px;align-items:center}
+.ibtn{width:38px;height:38px;border-radius:12px;display:grid;place-items:center;cursor:pointer}
+.ibtn:hover{border-color:var(--accent)}
+.who{display:flex;align-items:center;gap:8px;padding:3px 12px 3px 3px;border-radius:14px}
+.who-t{display:flex;flex-direction:column;line-height:1.15}.who-t b{font-size:12px;font-weight:700}.who-t span{font-size:10.5px;color:var(--muted);order:-1}
+.avatar{width:32px;height:32px;border-radius:11px;background:linear-gradient(135deg,var(--accent),var(--accent-2));color:var(--on-accent);display:grid;place-items:center;font-weight:700;font-size:13px}
+
+/* title row */
+.head{display:flex;align-items:center;gap:14px;flex-wrap:wrap}
+.head .ttl{flex:1;min-width:240px}
+.head h1{margin:0;font-size:clamp(24px,2.6vw,30px);font-weight:700;letter-spacing:-.02em;line-height:1.1;display:flex;align-items:center;gap:10px;flex-wrap:wrap}
+.crumb{font-size:12px;font-weight:600;color:var(--accent);background:var(--accent-softer);padding:4px 10px;border-radius:999px;letter-spacing:0}
+.head p{margin:3px 0 0;color:var(--muted);font-size:12.5px}
+.pills{display:flex;gap:8px;flex-wrap:wrap;align-items:center}
+.pill{display:flex;align-items:center;gap:6px;border-radius:12px;padding:8px 12px;font-size:11.5px;color:var(--muted)}
+.pill b{color:var(--ink);font-weight:600}
+.cta{display:inline-flex;align-items:center;gap:8px;background:var(--accent);color:var(--on-accent);border:0;cursor:pointer;font-weight:600;font-size:13px;padding:11px 18px;border-radius:14px;box-shadow:0 8px 20px -8px var(--accent)}
+.cta:hover{filter:brightness(1.07)}
+
+/* KPI cards */
+.kpis{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:14px}
+.card{border-radius:var(--r-lg);padding:16px;min-width:0;background:linear-gradient(135deg,var(--sheen),transparent 42%),var(--glass);border:1px solid var(--glass-brd);box-shadow:var(--glass-shadow);-webkit-backdrop-filter:blur(18px) saturate(170%);backdrop-filter:blur(18px) saturate(170%)}
+.kpi{padding:14px 16px 12px;display:flex;flex-direction:column}
+.k-top{display:flex;align-items:center;justify-content:space-between;gap:8px}
+.k-lab{font-size:12.5px;font-weight:600}
+.k-ic{width:28px;height:28px;border-radius:9px;display:grid;place-items:center;background:var(--accent-softer);color:var(--accent);flex:none}
+.k-ic.bad{background:var(--bad-soft);color:var(--bad)}
+.k-val{font-size:24px;font-weight:700;letter-spacing:-.02em;margin-top:6px;line-height:1.1}
+.k-val small{font-size:14px;color:var(--ink-2);font-weight:600}
+.k-delta{font-size:11px;color:var(--muted);margin-top:3px;display:flex;gap:4px;align-items:center;flex-wrap:wrap;min-height:16px}
+.up{color:var(--good);font-weight:700}.down{color:var(--bad);font-weight:700}
+.k-viz{margin-top:auto;padding-top:8px}
+.minis{display:flex;gap:6px;align-items:flex-end;margin-top:auto;padding-top:8px}
+.mini{flex:1;border-radius:12px;padding:7px 8px;background:color-mix(in oklab,var(--accent) 9%,transparent);border:1px solid var(--glass-brd);min-width:0}
+.mini b{display:block;font-size:14px}
+.mini span{font-size:10.5px;color:var(--muted)}
+.mini.hi{background:linear-gradient(170deg,var(--accent),var(--accent-2));color:var(--on-accent);padding-block:14px}
+.mini.hi span{color:var(--on-accent);opacity:.85}
+.chip{display:inline-flex;align-items:center;gap:4px;font-size:11px;font-weight:600;padding:3px 9px;border-radius:999px;background:var(--accent-softer);color:var(--accent);white-space:nowrap}
+.chip.bad{background:var(--bad-soft);color:var(--bad)}.chip.good{background:var(--good-soft);color:var(--good)}.chip.warn{background:var(--warn-soft);color:var(--warn)}
+
+/* view area: the one region that changes */
+.views{position:relative;min-height:0}
+.view{display:grid;grid-template-columns:repeat(12,minmax(0,1fr));gap:14px;align-content:start}
+.view[hidden]{display:none!important}
+@media (prefers-reduced-motion:no-preference){ .view{animation:in .28s ease} @keyframes in{from{opacity:.4;transform:translateY(6px)}to{opacity:1;transform:none}} }
+.c-12{grid-column:span 12}.c-8{grid-column:span 8}.c-7{grid-column:span 7}.c-5{grid-column:span 5}.c-4{grid-column:span 4}
+.ch-head{display:flex;justify-content:space-between;align-items:flex-start;gap:10px;margin-bottom:8px;flex-wrap:wrap}
+.ch-head h3{margin:0;font-size:14px;font-weight:600}
+.ch-head p{margin:2px 0 0;font-size:11.5px;color:var(--muted)}
+.insight{margin-top:10px;font-size:12px;color:var(--ink-2);background:color-mix(in oklab,var(--accent) 9%,transparent);border:1px solid var(--glass-brd);border-radius:12px;padding:9px 12px;display:flex;gap:8px;align-items:flex-start}
+.insight svg{flex:none;color:var(--accent);margin-top:1px}
+.insight b{color:var(--ink)}
+.legend{display:flex;gap:14px;font-size:11.5px;color:var(--ink-2);flex-wrap:wrap}
+.legend i{display:inline-block;width:14px;height:3px;border-radius:2px;vertical-align:middle;margin-right:6px;background:var(--accent)}
+.legend i.base{background:var(--base)}
+svg.chart{width:100%;height:auto;display:block;overflow:visible}
+.ax{font-size:10.5px;fill:var(--muted);font-family:var(--font)}
+.lbl{font-size:11px;fill:var(--ink);font-weight:600;font-family:var(--font)}
+.gl{stroke:var(--grid);stroke-width:1}
+.hit{fill:transparent;cursor:crosshair}
+.guide{stroke:var(--line-2);stroke-width:1;stroke-dasharray:3 3}
+.key{display:flex;flex-wrap:wrap;align-items:center;gap:4px 14px;margin-top:6px;font-size:11px;color:var(--ink-2)}
+.key .k{display:inline-flex;align-items:center;gap:6px}
+.key .sw{width:44px;height:12px;border-radius:4px;display:inline-block;border:1px solid var(--glass-brd)}
+.key .ramp{display:inline-flex;gap:2px}
+.key .ramp span{display:flex;flex-direction:column;align-items:center;gap:2px;font-size:10px;color:var(--muted);min-width:44px}
+.key b{color:var(--ink);font-weight:600}
+.seg-ctl{display:flex;gap:3px;background:color-mix(in oklab,var(--accent) 10%,transparent);border-radius:999px;padding:3px}
+.seg-ctl button{border:0;background:transparent;font-size:11.5px;font-weight:600;color:var(--ink-2);padding:6px 12px;border-radius:999px;cursor:pointer}
+.seg-ctl button[aria-pressed="true"]{background:var(--card);color:var(--accent);box-shadow:0 1px 3px rgba(30,31,51,.12)}
+
+/* overview */
+.finds{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px}
+.find{border:1px solid var(--glass-brd);border-radius:18px;padding:14px;display:flex;flex-direction:column;gap:6px;background:linear-gradient(135deg,var(--sheen),transparent 50%),var(--glass-strong);box-shadow:0 1px 0 var(--glass-hi) inset;min-width:0}
+.find .row{display:flex;justify-content:space-between;align-items:center;gap:8px}
+.find .fig{font-size:28px;font-weight:700;letter-spacing:-.02em;line-height:1.1}
+.find p{margin:0;font-size:12.5px;color:var(--ink-2)}
+.find .go{align-self:flex-start;margin-top:auto;border:0;background:transparent;color:var(--accent);font-weight:600;font-size:12px;cursor:pointer;padding:4px 0;display:flex;gap:4px;align-items:center}
+.find .go:hover{text-decoration:underline}
+.find.hot{background:linear-gradient(135deg,rgba(255,255,255,.28),transparent 45%),linear-gradient(150deg,var(--accent),var(--accent-2));color:#fff;border:1px solid rgba(255,255,255,.35)}
+.find.hot p,.find.hot .go{color:#fff}.find.hot .chip{background:rgba(255,255,255,.2);color:#fff}
+.opp{color:var(--panel-ink);border-radius:var(--r-lg);padding:18px;display:flex;flex-direction:column;gap:12px}
+.opp h3{margin:0;font-size:12px;color:var(--panel-muted);text-transform:uppercase;letter-spacing:.08em;font-weight:600}
+.opp .big{font-size:40px;font-weight:800;letter-spacing:-.02em;line-height:1}
+.opp p{margin:0;font-size:12.5px;color:var(--panel-muted)}
+.opp p b{color:var(--panel-ink)}
+.orow{display:grid;grid-template-columns:minmax(0,1fr) auto;gap:4px 10px;font-size:12px}
+.orow .tr{grid-column:1/-1;height:10px;border-radius:5px;background:var(--glass-dark-2);overflow:hidden}
+.orow .tr div{height:100%;border-radius:5px;background:linear-gradient(90deg,var(--accent),var(--accent-2))}
+.opp .cta{align-self:flex-start;margin-top:auto}
+
+/* segment panel */
+.panel{grid-column:span 12;color:var(--panel-ink);border-radius:var(--r-xl);padding:14px 16px;display:grid;grid-template-columns:minmax(0,.9fr) minmax(0,1.45fr);gap:16px}
+.p-head{display:flex;align-items:center;justify-content:space-between;gap:10px;margin-bottom:6px;flex-wrap:wrap}
+.p-head h2{margin:0;font-size:15px;font-weight:600}
+.tabs{display:flex;gap:4px;background:var(--glass-dark-2);border-radius:999px;padding:4px}
+.tabs button{border:0;background:transparent;color:var(--panel-ink);font-size:12px;font-weight:500;padding:6px 12px;border-radius:999px;cursor:pointer;display:flex;gap:6px;align-items:center}
+.tabs button .n{background:var(--panel-3);border-radius:999px;padding:0 6px;font-size:10.5px}
+.tabs button[aria-pressed="true"]{background:var(--accent);color:var(--on-accent)}
+.tabs button[aria-pressed="true"] .n{background:rgba(255,255,255,.25)}
+.seglist{display:flex;flex-direction:column;gap:4px}
+.seg{display:flex;align-items:center;gap:12px;padding:4px 12px;border-radius:14px;background:var(--glass-dark-2);border:0;color:inherit;text-align:left;cursor:pointer;width:100%}
+.seg:hover{background:rgba(255,255,255,.12)}
+.seg[aria-pressed="true"]{background:linear-gradient(100deg,var(--accent),var(--accent-2))}
+.seg .av{width:30px;height:30px;border-radius:50%;display:grid;place-items:center;font-size:11px;font-weight:700;background:var(--panel-3);flex:none}
+.seg[aria-pressed="true"] .av{background:rgba(255,255,255,.22)}
+.seg .nm{flex:1;min-width:0}
+.seg .nm b{display:block;font-size:13px;font-weight:600;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.seg .nm span{font-size:11px;color:var(--panel-muted)}
+.seg[aria-pressed="true"] .nm span{color:var(--panel-ink);opacity:.85}
+.st{font-size:10.5px;font-weight:600;padding:4px 10px;border-radius:999px;background:var(--panel-3);color:var(--panel-ink)}
+.seg[aria-pressed="true"] .st{background:var(--card);color:var(--accent)}
+.seg .amt{font-weight:600;font-size:13px;min-width:62px;text-align:right}
+.detail{border-radius:24px;padding:18px 20px;border:1px solid rgba(255,255,255,.3);box-shadow:0 1px 0 rgba(255,255,255,.35) inset;background:linear-gradient(135deg,rgba(255,255,255,.26),transparent 40%),linear-gradient(140deg,rgba(106,92,243,.9) 0%,rgba(127,114,246,.86) 55%,rgba(154,143,250,.82) 100%);color:#FFFFFF;display:flex;flex-direction:column;gap:16px;min-width:0}
+.d-row{display:grid;grid-template-columns:1.3fr 1fr 1fr;gap:14px}
+.d-lab{font-size:11.5px;opacity:.8;margin-bottom:6px}
+.d-title{font-size:22px;font-weight:700;letter-spacing:-.01em;display:flex;align-items:center;gap:10px;flex-wrap:wrap}
+.d-title .st{background:rgba(255,255,255,.2);color:#FFFFFF}
+.d-big{font-size:20px;font-weight:700}
+.tiles{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:12px}
+.tile{background:rgba(255,255,255,.14);border:1px solid rgba(255,255,255,.18);border-radius:16px;padding:12px 14px;min-height:72px;display:flex;flex-direction:column;justify-content:space-between;position:relative}
+.tile b{font-size:19px;font-weight:700}
+.tile span{font-size:11.5px;opacity:.85}
+.tile .corner{position:absolute;top:12px;right:12px;opacity:.75}
+.tile.dash{background:transparent;border:1.5px dashed rgba(255,255,255,.45)}
+.mixbar{display:flex;flex-direction:column;gap:8px}
+.mixbar .lab{display:flex;justify-content:space-between;font-size:11.5px;opacity:.85}
+.mixbar .tr{height:12px;border-radius:6px;background:rgba(255,255,255,.18);overflow:hidden}
+.mixbar .tr div{height:100%;border-radius:6px;background:#FFFFFF}
+.d-foot{margin-top:auto;display:grid;grid-template-columns:1fr 1fr 1.6fr;gap:14px;align-items:end;border-top:1px solid rgba(255,255,255,.2);padding-top:14px}
+.play{background:#FFFFFF;color:#2A2160;border-radius:14px;padding:10px 14px;font-size:12.5px;font-weight:600;line-height:1.35}
+.play small{display:block;font-size:10.5px;color:#6A5CF3;font-weight:600;text-transform:uppercase;letter-spacing:.06em;margin-bottom:2px}
+
+/* heatmaps */
+.hm-wrap{overflow-x:auto}
+table.hm{border-collapse:separate;border-spacing:2px 2px;width:100%;min-width:560px;font-size:11px}
+table.hm th{font-weight:500;color:var(--muted);text-align:center;padding:1px}
+table.hm th.rl{text-align:left;white-space:nowrap;color:var(--ink-2);font-weight:600;padding-right:6px}
+table.hm td{height:18px;border-radius:6px;text-align:center;font-variant-numeric:tabular-nums;font-weight:600;cursor:default}
+table.hm td.empty{background:transparent}
+table.hm td.size{color:var(--ink-2);font-weight:500;background:var(--accent-softer)}
+table.hm.tall td{height:40px}
+
+/* bar lists */
+.blist{display:flex;flex-direction:column;gap:10px}
+.brow{display:grid;grid-template-columns:minmax(0,1.3fr) minmax(0,1.4fr) auto;gap:10px;align-items:center;font-size:12px}
+.brow .nm{white-space:nowrap;overflow:hidden;text-overflow:ellipsis;color:var(--ink-2)}
+.track{height:10px;border-radius:5px;background:var(--accent-softer);position:relative;overflow:hidden;display:block}
+.fill{position:absolute;inset:0 auto 0 0;border-radius:5px;background:linear-gradient(90deg,var(--accent-2),var(--accent))}
+.brow .v{font-weight:600;text-align:right;white-space:nowrap;display:flex;gap:6px;align-items:center;justify-content:flex-end}
+.pairs{display:flex;flex-direction:column;gap:6px}
+.pair{display:grid;grid-template-columns:minmax(0,1fr) auto;gap:3px 10px;padding:7px 12px;border-radius:14px;background:color-mix(in oklab,var(--accent) 8%,transparent);border:1px solid var(--glass-brd);align-items:center}
+.pair .t{font-size:12px;font-weight:600;min-width:0}
+.pair .t span{color:var(--accent);margin:0 4px}
+.pair .m{font-size:11px;color:var(--muted);grid-column:1/-1;display:flex;gap:10px;align-items:center}
+.pair .m .track{flex:1;height:6px;background:var(--card)}
+
+/* action plan */
+.plan{grid-column:span 12;border-radius:var(--r-xl);color:var(--panel-ink);padding:18px 20px;display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1.7fr);gap:22px}
+.plan h2{margin:0 0 6px;font-size:12px;font-weight:600;color:var(--panel-muted);text-transform:uppercase;letter-spacing:.08em}
+.plan .big{font-size:clamp(34px,4vw,44px);font-weight:800;letter-spacing:-.02em;line-height:1}
+.plan p{color:var(--panel-muted);font-size:13px;margin:10px 0 16px;max-width:52ch}
+.cmp{display:flex;flex-direction:column;gap:10px}
+.cmp .row{display:grid;grid-template-columns:110px minmax(0,1fr) 64px;gap:10px;align-items:center;font-size:12px}
+.cmp .tr{height:14px;border-radius:7px;background:var(--glass-dark-2);overflow:hidden}
+.cmp .tr div{height:100%;border-radius:7px}
+.acts{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:12px}
+.act{border-radius:20px;padding:14px;background:var(--glass-dark-2);border:1px solid var(--glass-dark-brd);display:flex;flex-direction:column;gap:9px;min-width:0}
+.act:first-child{background:linear-gradient(135deg,rgba(255,255,255,.24),transparent 45%),linear-gradient(150deg,#6A5CF3,#9A8FFA);color:#FFFFFF;border-color:rgba(255,255,255,.3)}
+.act .ix{width:30px;height:30px;border-radius:50%;background:rgba(255,255,255,.14);display:grid;place-items:center;font-size:12px;font-weight:700}
+.act h3{margin:0;font-size:14px;font-weight:600;line-height:1.3}
+.act .val{font-size:24px;font-weight:700}
+.act p{margin:0;font-size:11.5px;opacity:.78;line-height:1.45}
+.act ul{margin:0;padding-left:16px;font-size:11.5px;opacity:.9;display:flex;flex-direction:column;gap:3px}
+.foot{grid-column:span 12;display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:14px;font-size:12px;color:var(--ink-2)}
+.foot>div{border-radius:var(--r-lg);padding:12px 14px;background:linear-gradient(135deg,var(--sheen),transparent 42%),var(--glass);border:1px solid var(--glass-brd);box-shadow:var(--glass-shadow);-webkit-backdrop-filter:blur(18px) saturate(170%);backdrop-filter:blur(18px) saturate(170%)}
+.foot h4{margin:0 0 6px;font-size:12px;color:var(--ink);font-weight:700}
+.foot p,.foot ul{margin:0}.foot ul{padding-left:16px;display:flex;flex-direction:column;gap:2px}
+
+#tip{position:fixed;z-index:20;pointer-events:none;background:var(--panel);color:var(--panel-ink);font-size:12px;padding:8px 11px;border-radius:10px;box-shadow:0 10px 24px rgba(0,0,0,.2);max-width:240px;line-height:1.4}
+#tip b{display:block;font-size:12.5px}
+
+/* Desktop: the whole dashboard is one fixed frame; only the view area scrolls if a screen is short */
+@media (min-width:1101px) and (min-height:700px){
+  .board{height:calc(100dvh - 24px)}
+  .views{flex:1;overflow-y:auto;overflow-x:hidden;margin-inline:-4px;padding-inline:4px;padding-bottom:2px;scrollbar-width:thin}
+}
+@media (max-width:1100px){
+  .kpis{grid-template-columns:repeat(2,minmax(0,1fr))}
+  .panel,.plan{grid-template-columns:1fr}
+  .c-8,.c-7,.c-5,.c-4{grid-column:span 12}
+  .acts{grid-template-columns:1fr}
+  .foot{grid-template-columns:1fr}
+}
+@media (max-width:640px){
+  body{padding-inline:10px}
+  .kpis{grid-template-columns:1fr}
+  .finds{grid-template-columns:1fr}
+  .d-row,.d-foot{grid-template-columns:1fr 1fr}
+  .d-row>div:first-child,.d-foot>div:last-child{grid-column:1/-1}
+  .tiles{grid-template-columns:1fr 1fr}
+  .pills .pill{display:none}
+  .head .cta{width:100%;justify-content:center}
+}
+</style>
+
+<div class="board">
+  <div class="aurora" aria-hidden="true"><i></i><i></i><i></i><i></i></div>
+  <header class="top">
+    <div class="brand">
+      <svg width="32" height="32" viewBox="0 0 34 34" aria-hidden="true"><rect x="3" y="5" width="13" height="24" rx="6" style="fill:var(--accent)" transform="skewX(-12) translate(6 0)"/><rect x="15" y="5" width="13" height="24" rx="6" style="fill:var(--accent-2);opacity:.8" transform="skewX(-12) translate(6 0)"/></svg>
+      <div><b>RETAILPULSE</b><span>Customer Revenue Intelligence</span></div>
+    </div>
+    <div class="fy num glass" title="Fiscal year analysed">FY11</div>
+    <nav class="nav glass-dark" role="tablist" aria-label="Dashboard views" id="nav"></nav>
+    <div class="tools">
+      <button class="ibtn glass" id="theme" type="button" aria-label="Switch light or dark theme" title="Switch theme">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3a6 6 0 0 0 9 9 9 9 0 1 1-9-9Z"/></svg>
+      </button>
+      <div class="who glass" title="Prepared by a Business Data Analyst"><span class="avatar" aria-hidden="true"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"><circle cx="12" cy="8" r="4"/><path d="M4 21a8 8 0 0 1 16 0"/></svg></span><span class="who-t"><b>Business Data Analyst</b><span>Prepared by</span></span></div>
+    </div>
+  </header>
+
+  <section class="head">
+    <div class="ttl">
+      <h1>Revenue at Risk <span class="crumb" id="crumb">Overview</span></h1>
+      <p>UK online gift wholesaler · FY2011 (Dec 2010 – Nov 2011) vs FY2010 · why customers stop buying, what it costs, what to fix first</p>
+    </div>
+    <div class="pills">
+      <div class="pill num glass" id="sc-rows"></div>
+      <div class="pill num glass" id="sc-cust"></div>
+      <div class="pill num glass" id="sc-ctry"></div>
+      <button class="cta" type="button" data-goto="plan"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round"><path d="M12 5v14M5 12h14"/></svg>Action plan</button>
+    </div>
+  </section>
+
+  <section class="kpis" id="kpis"></section>
+
+  <main class="views" id="views">
+    <!-- OVERVIEW -->
+    <section class="view" id="v-overview" role="tabpanel" aria-labelledby="t-overview">
+      <div class="card c-8">
+        <div class="ch-head"><div><h3>Key findings</h3><p>Four things leadership needs to know · click through for the detail</p></div></div>
+        <div class="finds" id="finds"></div>
+      </div>
+      <div class="opp glass-dark c-4" id="opp"></div>
+    </section>
+
+    <!-- CUSTOMERS -->
+    <section class="view" id="v-customers" role="tabpanel" aria-labelledby="t-customers" hidden>
+      <div class="panel glass-dark">
+        <div>
+          <div class="p-head">
+            <h2>Customer segments (RFM)</h2>
+            <div class="tabs" role="group" aria-label="Filter segments" id="segtabs"></div>
+          </div>
+          <div class="seglist" id="seglist"></div>
+        </div>
+        <div class="detail" id="detail" aria-live="polite"></div>
+      </div>
+    </section>
+
+    <!-- REVENUE -->
+    <section class="view" id="v-revenue" role="tabpanel" aria-labelledby="t-revenue" hidden>
+      <div class="card c-8">
+        <div class="ch-head">
+          <div><h3 id="rv-title">Monthly net sales</h3><p id="rv-sub">FY2011 against FY2010, £ per month</p></div>
+          <div class="seg-ctl" role="group" aria-label="Revenue chart">
+            <button type="button" id="rv-m" aria-pressed="true" data-rv="m">Monthly trend</button>
+            <button type="button" id="rv-w" aria-pressed="false" data-rv="w">Weekday × hour</button>
+          </div>
+        </div>
+        <div id="rv-monthly">
+          <div class="legend" style="margin-bottom:4px"><span><i></i>FY2011</span><span><i class="base"></i>FY2010</span></div>
+          <div id="ch-monthly"></div>
+          <div class="insight" id="in-monthly"></div>
+        </div>
+        <div id="rv-week" hidden>
+          <div class="hm-wrap"><table class="hm tall" id="week"></table></div>
+          <div class="key" id="key-week"></div>
+          <div class="insight" id="in-week"></div>
+        </div>
+      </div>
+      <div class="card c-4">
+        <div class="ch-head"><div><h3>Customer concentration</h3><p>Cumulative share of FY2011 revenue</p></div></div>
+        <div id="ch-pareto"></div>
+        <div class="insight" id="in-pareto"></div>
+      </div>
+    </section>
+
+    <!-- RETENTION -->
+    <section class="view" id="v-retention" role="tabpanel" aria-labelledby="t-retention" hidden>
+      <div class="card c-8">
+        <div class="ch-head"><div><h3>Cohort retention</h3><p>% of each month's new customers who bought again N months later (FY2010 cohorts)</p></div></div>
+        <div class="hm-wrap"><table class="hm" id="cohort"></table></div>
+        <div class="key" id="key-cohort"></div>
+        <div class="insight" id="in-cohort"></div>
+      </div>
+      <div class="card c-4">
+        <div class="ch-head"><div><h3>The first order predicts loyalty</h3><p>12-month repeat rate by size of first order</p></div></div>
+        <div id="ch-first"></div>
+        <div class="insight" id="in-first"></div>
+      </div>
+    </section>
+
+    <!-- PRODUCTS -->
+    <section class="view" id="v-products" role="tabpanel" aria-labelledby="t-products" hidden>
+      <div class="card c-4">
+        <div class="ch-head"><div><h3>Most-returned products</h3><p>FY2011 returned value · return rate</p></div></div>
+        <div class="blist" id="ch-returns"></div>
+        <div class="insight" id="in-returns"></div>
+      </div>
+      <div class="card c-4">
+        <div class="ch-head"><div><h3>International markets</h3><p>FY2011 revenue outside the UK · YoY</p></div></div>
+        <div class="blist" id="ch-markets"></div>
+        <div class="insight" id="in-markets"></div>
+      </div>
+      <div class="card c-4">
+        <div class="ch-head"><div><h3>Bought together</h3><p>Product pairs with the highest lift</p></div></div>
+        <div class="pairs" id="ch-basket"></div>
+        <div class="insight" id="in-basket"></div>
+      </div>
+    </section>
+
+    <!-- ACTION PLAN -->
+    <section class="view" id="v-plan" role="tabpanel" aria-labelledby="t-plan" hidden>
+      <div class="plan glass-dark" id="plan"></div>
+      <div class="foot">
+        <div><h4>Data</h4><p>UCI Machine Learning Repository, “Online Retail II” (Chen, 2019). 1,067,371 transaction lines from a UK-based online gift retailer, Dec 2009 – Dec 2011. Many customers are wholesalers.</p></div>
+        <div><h4>Cleaning</h4><ul id="clean"></ul></div>
+        <div><h4>Method</h4><ul>
+          <li>Fiscal year runs Dec–Nov so both years are complete.</li>
+          <li>RFM: quintile scores on recency, frequency and spend; snapshot 10 Dec 2011.</li>
+          <li>Overdue: silence &gt; 2× the customer’s own median gap (min 60 days), under 365 days.</li>
+          <li>Repeat vs first order: chi-square test of independence.</li>
+        </ul></div>
+      </div>
+    </section>
+  </main>
+</div>
+<div id="tip" hidden></div>
+
+<script>
+const D = {"kpis":{"net_sales":9555545.0,"net_sales_prev":9396642.0,"net_sales_yoy":1.7,"orders":18956,"orders_yoy":-4.0,"aov":504.09,"aov_yoy":5.9,"customers":4292,"customers_yoy":1.3,"repeat_rate":63.9,"repeat_rate_prev":66.4,"returns_value":224626.0,"return_rate":2.3,"return_rate_prev":2.5,"guest_share":14.7,"q4_share":37.5},"monthly":{"labels":["Dec","Jan","Feb","Mar","Apr","May","Jun","Jul","Aug","Sep","Oct","Nov"],"fy2010":[797901.0,612297.0,537910.0,761706.0,646341.0,643492.0,696583.0,632994.0,674038.0,869243.0,1094436.0,1429701.0],"fy2011":[775638.0,593197.0,507800.0,689834.0,515378.0,739953.0,737559.0,688219.0,724217.0,1028320.0,1103314.0,1452116.0],"orders2011":[1550,1080,1093,1440,1235,1668,1525,1452,1339,1818,2005,2751],"customers2011":[884,738,757,973,853,1054,990,946,933,1259,1361,1660]},"cohort":{"rows":[{"cohort":"Dec 09","size":951,"values":[100.0,35.0,33.3,42.5,37.9,36.0,37.6,34.4,33.8,36.2,42.2,49.6,37.6]},{"cohort":"Jan 10","size":368,"values":[100.0,21.5,32.1,31.5,27.2,31.0,26.9,23.4,28.5,32.6,31.0,17.9,22.8]},{"cohort":"Feb 10","size":375,"values":[100.0,23.5,22.7,29.3,24.5,19.7,19.2,28.8,25.6,27.7,11.5,12.5,15.2]},{"cohort":"Mar 10","size":441,"values":[100.0,19.1,23.1,24.3,23.1,20.4,24.7,30.6,27.7,10.9,11.3,14.5,20.0]},{"cohort":"Apr 10","size":294,"values":[100.0,19.1,19.1,16.0,18.4,22.1,27.6,26.5,10.5,10.9,7.5,14.0,14.3]},{"cohort":"May 10","size":255,"values":[100.0,15.7,16.9,17.6,17.6,25.5,21.2,12.6,5.9,8.2,11.4,13.3,15.3]},{"cohort":"Jun 10","size":267,"values":[100.0,17.6,18.7,20.6,23.2,28.5,12.7,9.0,8.2,11.2,10.5,13.9,15.0]},{"cohort":"Jul 10","size":185,"values":[100.0,15.7,18.4,29.7,29.2,14.1,11.3,14.6,14.6,11.3,13.5,14.6,13.0]},{"cohort":"Aug 10","size":163,"values":[100.0,19.6,28.8,32.5,16.6,11.7,9.8,12.9,13.5,12.9,12.9,11.7,14.7]},{"cohort":"Sep 10","size":239,"values":[100.0,23.0,23.4,13.0,8.8,10.5,13.8,9.6,13.0,13.0,12.1,10.0,22.6]},{"cohort":"Oct 10","size":375,"values":[100.0,25.9,14.7,12.5,8.8,8.3,13.1,13.9,10.7,9.3,10.7,12.8,19.2]},{"cohort":"Nov 10","size":326,"values":[100.0,17.5,9.5,9.5,7.7,8.9,12.9,10.1,8.6,9.2,11.0,14.7,25.1]}],"avg_curve":[100.0,19.8,20.7,21.5,18.6,18.2,17.6,17.4,15.2,14.3,13.0,13.6,17.9],"dec09_m12":37.6,"new_m1":19.8,"new_m3":21.5},"segments":[{"name":"Champions","customers":1565,"cust_share":26.7,"rev_share":71.6,"revenue":12053606,"t12":6387986,"recency":17,"orders":9},{"name":"Loyal","customers":947,"cust_share":16.2,"rev_share":13.2,"revenue":2218120,"t12":1067737,"recency":79,"orders":4},{"name":"New & Promising","customers":560,"cust_share":9.6,"rev_share":1.4,"revenue":231565,"t12":200838,"recency":25,"orders":2},{"name":"Need Attention","customers":440,"cust_share":7.5,"rev_share":1.1,"revenue":181147,"t12":154332,"recency":96,"orders":1},{"name":"At Risk \u2013 High Value","customers":444,"cust_share":7.6,"rev_share":7.8,"revenue":1314732,"t12":194360,"recency":360,"orders":5},{"name":"At Risk","customers":239,"cust_share":4.1,"rev_share":1.5,"revenue":250057,"t12":49793,"recency":387,"orders":3},{"name":"Hibernating","customers":715,"cust_share":12.2,"rev_share":1.6,"revenue":268865,"t12":128228,"recency":313,"orders":1},{"name":"Lost","customers":942,"cust_share":16.1,"rev_share":1.8,"revenue":304837,"t12":0,"recency":548,"orders":1}],"risk":{"customers":683,"t12_revenue":244152,"share_of_t12":3.0,"high_value_customers":444,"high_value_t12":194360,"median_days_silent":372,"win_back":{"10":24415,"20":48830,"30":73246},"overdue_customers":601,"overdue_value":601086,"overdue_share":7.3,"overdue_top100_value":353999,"overdue_median_gap":40,"overdue_median_silence":196,"save":{"10":60109,"25":150272,"50":300543},"overdue_bands":[{"band":"60\u2013120d","customers":129,"value":202379},{"band":"120\u2013180d","customers":135,"value":133688},{"band":"180\u2013270d","customers":186,"value":199656},{"band":"270\u2013365d","customers":151,"value":65364}],"overdue_by_segment":{"Loyal":230,"At Risk \u2013 High Value":179,"Hibernating":92,"Need Attention":52,"At Risk":48},"churned_customers":1519,"churn_rate":35.8,"churned_fy10_revenue":1046474,"new_customers_fy11":1585},"pareto":{"x":[0,1,2,5,10,15,20,30,40,50,60,70,80,90,100],"y":[0,30.5,37.4,49.0,60.2,67.9,73.8,82.1,87.8,91.8,94.8,96.9,98.4,99.5,100.0],"top20":73.8,"top1":30.5,"top10_customers_share":16.7},"returns":{"top_products":[{"name":"Regency Cakestand 3 Tier","returned":9593,"rate":5.4},{"name":"White Hanging Heart T-Light Ho","returned":6621,"rate":6.0},{"name":"Fairy Cake Flannel Assorted Co","returned":6554,"rate":26.9},{"name":"Pantry Chopping Board","returned":4803,"rate":45.3},{"name":"Doormat Fairy Cake","returned":4555,"rate":16.1},{"name":"Gin + Tonic Diet Metal Sign","returned":3775,"rate":12.6},{"name":"Tea Time Party Bunting","returned":3693,"rate":22.2},{"name":"Feltcraft Doll Molly","returned":3510,"rate":22.9}],"monthly":[17548.0,14341.0,8336.0,10504.0,33316.0,8948.0,13714.0,11407.0,22927.0,16981.0,41613.0,24991.0],"top8_share":19.2,"customers_returning":1495},"countries":{"uk_share":84.5,"intl_share":15.5,"top":[{"name":"Netherlands","revenue":272161,"yoy":2.4},{"name":"EIRE","revenue":263710,"yoy":-25.2},{"name":"Germany","revenue":198357,"yoy":11.5},{"name":"France","revenue":177954,"yoy":40.6},{"name":"Australia","revenue":138104,"yoy":365.1},{"name":"Spain","revenue":55418,"yoy":31.8},{"name":"Switzerland","revenue":53066,"yoy":29.6},{"name":"Japan","revenue":37416,"yoy":567.3}]},"heatmap":{"days":["Mon","Tue","Wed","Thu","Fri","Sat","Sun"],"present_days":[0,1,2,3,4,6],"hours":[7,8,9,10,11,12,13,14,15,16,17,18,19,20],"values":[[1445.0,43293.0,148903.0,210000.0,160548.0,184415.0,219244.0,191616.0,179330.0,107281.0,154557.0,2218.0,0.0,0.0],[1963.0,70053.0,179551.0,248142.0,274590.0,248604.0,227443.0,187597.0,287006.0,161317.0,50733.0,15576.0,0.0,0.0],[3343.0,40231.0,133178.0,247521.0,212658.0,265997.0,225679.0,191196.0,213919.0,119918.0,39984.0,0.0,2893.0,13032.0],[6884.0,64602.0,140732.0,286267.0,167188.0,271779.0,185413.0,199791.0,245016.0,167641.0,114220.0,104891.0,43283.0,5719.0],[16835.0,48033.0,151440.0,192342.0,193672.0,225530.0,178521.0,206438.0,183777.0,64893.0,51126.0,76.0,373.0,19.0],[0.0,0.0,779.0,78736.0,142278.0,148044.0,139867.0,101443.0,124535.0,38386.0,0.0,0.0,0.0,0.0]],"peak":{"day":"Tue","hour":15}},"clv":{"median_clv12":848,"mean_clv12":2268,"repeat_12m":75.2,"by_first_order":[{"band":"Q1 small","repeat":64.6,"clv":284,"first":117},{"band":"Q2","repeat":74.4,"clv":643,"first":226},{"band":"Q3","repeat":78.1,"clv":1008,"first":345},{"band":"Q4 large","repeat":83.8,"clv":2249,"first":679}],"chi2_p":6.244328404586197e-24,"n":4285,"repeaters_clv":1282,"one_timers_clv":228},"basket":{"baskets":15455,"pairs":[{"a":"Set/6 Red Spotty Paper Cups","b":"Set/6 Red Spotty Paper Plate","lift":47.1,"conf":82,"support":1.3},{"a":"Feltcraft Cushion Butterfly","b":"Feltcraft Cushion Rabbit","lift":39.3,"conf":70,"support":1.1},{"a":"Feltcraft Princess Charlotte","b":"Feltcraft Princess Lola Doll","lift":33.5,"conf":66,"support":1.2},{"a":"Feltcraft Cushion Owl","b":"Feltcraft Cushion Rabbit","lift":27.3,"conf":61,"support":1.1},{"a":"Hand Warmer Owl Design","b":"Hand Warmer Scotty Dog Desig","lift":22.5,"conf":56,"support":1.2},{"a":"Jumbo Bag Vintage Christmas","b":"Jumbo Bag 50'S Christmas","lift":22.1,"conf":62,"support":1.1}]},"meta":{"rows_raw":1067371,"rows_clean":1003338,"customers":5852,"products":4723,"countries":43,"period":"Dec 2009 \u2013 Dec 2011"},"actions":{"yoy_growth_value":158903,"items":[{"title":"Win back overdue repeat customers","value":150272,"assumption":"Recover 25% of the \u00a3601,086 annual value held by 601 overdue customers"},{"title":"Engineer the second order","value":83530,"assumption":"+5 pts of FY2011's 1,585 new customers reorder; each repeater is worth \u00a31,054 more in year one"},{"title":"Fix the most-returned products","value":21564,"assumption":"Halve returns on the 8 products behind 19.2% of returned value"}],"total":255366,"vs_growth":1.61},"cleaning":[{"rule":"Drop exact duplicate rows","rows_before":1067371,"rows_after":1033036,"rows_removed":34335},{"rule":"Returns: drop cancellations of the giant outlier orders","rows_before":17914,"rows_after":17912,"rows_removed":2},{"rule":"Remove cancellation invoices (prefix C)","rows_before":1033036,"rows_after":1013932,"rows_removed":19104},{"rule":"Remove bad-debt adjustments (prefix A)","rows_before":1013932,"rows_after":1013926,"rows_removed":6},{"rule":"Remove non-product codes (postage, fees, samples)","rows_before":1013926,"rows_after":1009303,"rows_removed":4623},{"rule":"Remove zero/negative quantity or price","rows_before":1009303,"rows_after":1003340,"rows_removed":5963},{"rule":"Remove extreme quantity outliers (>=20,000 units)","rows_before":1003340,"rows_after":1003338,"rows_removed":2}]};
+
+/* ---------- helpers ---------- */
+const $ = s => document.querySelector(s);
+const gbp = (v, d) => {
+  const a = Math.abs(v);
+  if (a >= 1e6) return '£' + (v / 1e6).toFixed(d ?? 2) + 'M';
+  if (a >= 1e3) return '£' + (v / 1e3).toFixed(d ?? 0) + 'K';
+  return '£' + Math.round(v).toLocaleString('en-GB');
+};
+const n0 = v => Math.round(v).toLocaleString('en-GB');
+const esc = s => String(s).replace(/[&<>"]/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
+const arrow = up => up
+  ? '<svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round"><path d="M12 19V5M5 12l7-7 7 7"/></svg>'
+  : '<svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round"><path d="M12 5v14M5 12l7 7 7-7"/></svg>';
+const I = {
+  alert:'<path d="M12 8v5M12 16h.01"/><circle cx="12" cy="12" r="9"/>',
+  cal:'<rect x="3" y="5" width="18" height="16" rx="3"/><path d="M8 3v4M16 3v4M3 10h18"/>',
+  clock:'<circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 2"/>',
+  arrowur:'<path d="M7 17 17 7M8 7h9v9"/>',
+  arrowr:'<path d="M5 12h14M13 6l6 6-6 6"/>',
+  bulb:'<path d="M9 18h6M10 21h4"/><path d="M12 3a6 6 0 0 0-3.5 10.9c.6.5 1 1.2 1 2.1h5c0-.9.4-1.6 1-2.1A6 6 0 0 0 12 3Z"/>',
+  grid:'<rect x="3" y="3" width="7" height="7" rx="2"/><rect x="14" y="3" width="7" height="7" rx="2"/><rect x="3" y="14" width="7" height="7" rx="2"/><rect x="14" y="14" width="7" height="7" rx="2"/>',
+  users:'<circle cx="9" cy="8" r="3.5"/><path d="M2.5 20a6.5 6.5 0 0 1 13 0"/><path d="M16 4.5a3.5 3.5 0 0 1 0 7M21.5 20a6.5 6.5 0 0 0-4-6"/>',
+  pound:'<path d="M17 20H7c2-2 2.5-4 2.5-6V9a3.5 3.5 0 0 1 6.5-1.8M6 13h8"/>',
+  loop:'<path d="M17 2l3 3-3 3"/><path d="M4 11V9a4 4 0 0 1 4-4h12M7 22l-3-3 3-3"/><path d="M20 13v2a4 4 0 0 1-4 4H4"/>',
+  box:'<path d="M21 8 12 3 3 8l9 5 9-5Z"/><path d="M3 8v8l9 5 9-5V8M12 13v8"/>',
+  flag:'<path d="M5 21V4M5 4h11l-2 4 2 4H5"/>',
+};
+const icon = (k, s = 16) => `<svg width="${s}" height="${s}" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">${I[k]}</svg>`;
+const insight = (id, html) => { $(id).innerHTML = icon('bulb', 15) + '<div>' + html + '</div>'; };
+
+/* ---------- views (the slicer) ---------- */
+const VIEWS = [
+  {id:'overview', label:'Overview', ic:'grid'},
+  {id:'customers', label:'Customers', ic:'users'},
+  {id:'revenue', label:'Revenue', ic:'pound'},
+  {id:'retention', label:'Retention', ic:'loop'},
+  {id:'products', label:'Products', ic:'box'},
+  {id:'plan', label:'Action plan', ic:'flag'},
+];
+$('#nav').innerHTML = VIEWS.map(v => `<button type="button" role="tab" id="t-${v.id}" aria-controls="v-${v.id}" aria-selected="false" tabindex="-1" data-view="${v.id}">${icon(v.ic, 14)}${v.label}</button>`).join('');
+function show(id, focus) {
+  if (!VIEWS.find(v => v.id === id)) id = 'overview';
+  VIEWS.forEach(v => {
+    const on = v.id === id, t = $('#t-' + v.id);
+    t.setAttribute('aria-selected', on); t.tabIndex = on ? 0 : -1;
+    $('#v-' + v.id).hidden = !on;
+  });
+  $('#crumb').textContent = VIEWS.find(v => v.id === id).label;
+  $('#views').scrollTop = 0;
+  if (focus) $('#t-' + id).focus();
+  try { history.replaceState(null, '', '#' + id); } catch (e) {}
+  try { localStorage.setItem('rp-view', id); } catch (e) {}
+  tip.hidden = true;
+}
+$('#nav').addEventListener('keydown', e => {
+  if (!['ArrowLeft', 'ArrowRight', 'Home', 'End'].includes(e.key)) return;
+  const i = VIEWS.findIndex(v => $('#t-' + v.id).getAttribute('aria-selected') === 'true');
+  const n = e.key === 'Home' ? 0 : e.key === 'End' ? VIEWS.length - 1 : (i + (e.key === 'ArrowRight' ? 1 : -1) + VIEWS.length) % VIEWS.length;
+  e.preventDefault(); show(VIEWS[n].id, true);
+});
+
+/* ---------- tooltip ---------- */
+const tip = $('#tip');
+document.addEventListener('pointermove', e => {
+  const t = e.target.closest('[data-tip]');
+  if (!t) { tip.hidden = true; document.querySelectorAll('.guide.live').forEach(g => g.style.opacity = 0); return; }
+  tip.innerHTML = t.dataset.tip; tip.hidden = false;
+  const w = tip.offsetWidth, h = tip.offsetHeight;
+  let x = e.clientX + 14, y = e.clientY - h - 12;
+  if (x + w > innerWidth - 8) x = e.clientX - w - 14;
+  if (y < 8) y = e.clientY + 16;
+  tip.style.left = x + 'px'; tip.style.top = y + 'px';
+  if (t.dataset.gx) { const g = t.ownerSVGElement.querySelector('.guide.live'); g.setAttribute('x1', t.dataset.gx); g.setAttribute('x2', t.dataset.gx); g.style.opacity = 1; }
+});
+document.addEventListener('pointerleave', () => { tip.hidden = true; });
+
+/* ---------- KPI cards (constant across views) ---------- */
+function kpis() {
+  const k = D.kpis, r = D.risk, m = D.monthly, c = D.cohort;
+  const VW = 290, VH = 66;
+  const bmax = Math.max(...r.overdue_bands.map(b => b.value)), bw = VW / 4;
+  const bands = r.overdue_bands.map((b, i) => {
+    const h = 10 + 30 * b.value / bmax, x = i * bw + 4, w = bw - 10;
+    return `<g data-tip="<b>${b.band} silent</b>${b.customers} customers · ${gbp(b.value)} a year">
+      <rect x="${x}" y="${50 - h}" width="${w}" height="${h}" rx="7" style="fill:${i === 0 ? 'var(--bad)' : 'var(--accent-soft)'}"/>
+      <text x="${x + w / 2}" y="${45 - h}" text-anchor="middle" class="lbl" style="font-size:10px">${gbp(b.value)}</text>
+      <text x="${x + w / 2}" y="63" text-anchor="middle" class="ax" style="font-size:9.5px">${b.band}</text></g>`;
+  }).join('');
+  const mx = Math.max(...m.fy2011), mw = VW / 12;
+  const bars = m.fy2011.map((v, i) => {
+    const h = 6 + 44 * v / mx, x = i * mw + 2, last = i === 11;
+    return `<g data-tip="<b>${m.labels[i]} ${i === 0 ? 2010 : 2011}</b>${gbp(v, 2)} · FY2010 ${gbp(m.fy2010[i], 2)}">
+      <rect x="${x}" y="${52 - h}" width="${mw - 6}" height="${h}" rx="4" style="fill:${last ? 'var(--accent)' : 'color-mix(in oklab,var(--accent) ' + (22 + i * 4) + '%,var(--card))'}"/>
+      <text x="${x + (mw - 6) / 2}" y="64" text-anchor="middle" class="ax" style="font-size:8.5px">${m.labels[i][0]}</text></g>`;
+  }).join('');
+  const cv = c.avg_curve.slice(1), ymax = 25;
+  const pts = cv.map((v, i) => [8 + i * (VW - 16) / (cv.length - 1), VH - 6 - (v / ymax) * (VH - 16)]);
+  const path = pts.map((p, i) => (i ? 'L' : 'M') + p[0].toFixed(1) + ' ' + p[1].toFixed(1)).join(' ');
+  const area = path + ` L${pts.at(-1)[0]} ${VH - 2} L${pts[0][0]} ${VH - 2} Z`;
+  const dots = pts.map((p, i) => `<circle cx="${p[0]}" cy="${p[1]}" r="${i === 0 ? 4.5 : 3}" style="fill:var(--card);stroke:var(--accent);stroke-width:2"/>
+     <rect class="hit" x="${p[0] - 11}" y="0" width="22" height="${VH}" data-tip="<b>Month ${i + 1}</b>${cv[i]}% of new customers bought"/>`).join('');
+
+  $('#kpis').innerHTML = `
+  <article class="card kpi">
+    <div class="k-top"><span class="k-lab">Revenue at risk now</span><span class="k-ic bad">${icon('alert')}</span></div>
+    <div class="k-val num">${gbp(r.overdue_value)}</div>
+    <div class="k-delta"><span class="down">${n0(r.overdue_customers)} repeat customers</span> overdue for their next order</div>
+    <svg class="chart k-viz" viewBox="0 0 ${VW} ${VH}" role="img" aria-label="Overdue annual value by days of silence">${bands}</svg>
+  </article>
+  <article class="card kpi">
+    <div class="k-top"><span class="k-lab">Net sales · FY2011</span><span class="k-ic">${icon('cal')}</span></div>
+    <div class="k-val num">${gbp(k.net_sales)}</div>
+    <div class="k-delta"><span class="up">${arrow(1)} ${k.net_sales_yoy}%</span> vs FY2010 · orders <span class="down">${arrow(0)} ${Math.abs(k.orders_yoy)}%</span> · AOV <span class="up">${arrow(1)} ${k.aov_yoy}%</span></div>
+    <svg class="chart k-viz" viewBox="0 0 ${VW} ${VH}" role="img" aria-label="Monthly net sales FY2011">${bars}</svg>
+  </article>
+  <article class="card kpi">
+    <div class="k-top"><span class="k-lab">New customers who return</span><span class="k-ic">${icon('clock')}</span></div>
+    <div class="k-val num">${c.new_m1}<small>%</small></div>
+    <div class="k-delta"><span class="down">${arrow(0)} ${(100 - c.new_m1).toFixed(0)}%</span> don't reorder in month 1 · ${c.avg_curve[12]}% by month 12</div>
+    <svg class="chart k-viz" viewBox="0 0 ${VW} ${VH}" role="img" aria-label="Average retention curve, months 1 to 12">
+      <defs><linearGradient id="ga" x1="0" x2="0" y1="0" y2="1"><stop offset="0" style="stop-color:var(--accent);stop-opacity:.28"/><stop offset="1" style="stop-color:var(--accent);stop-opacity:0"/></linearGradient></defs>
+      <path d="${area}" style="fill:url(#ga)"/><path d="${path}" style="fill:none;stroke:var(--accent);stroke-width:2.2"/>${dots}</svg>
+  </article>
+  <article class="card kpi">
+    <div class="k-top"><span class="k-lab">Customers lost in FY2011</span><span class="k-ic">${icon('arrowur')}</span></div>
+    <div class="k-val num">${gbp(r.churned_fy10_revenue)}</div>
+    <div class="k-delta">FY2010 revenue that never came back <span class="chip bad">${r.churn_rate}% churn</span></div>
+    <div class="minis">
+      <div class="mini"><b class="num">${n0(r.churned_customers)}</b><span>Lost</span></div>
+      <div class="mini hi"><b class="num">${n0(r.new_customers_fy11)}</b><span>New</span></div>
+      <div class="mini"><b class="num">+${n0(r.new_customers_fy11 - r.churned_customers)}</b><span>Net gain</span></div>
+    </div>
+  </article>`;
+  $('#sc-rows').innerHTML = `<span>Clean lines</span><b>${n0(D.meta.rows_clean)}</b>`;
+  $('#sc-cust').innerHTML = `<span>Customers</span><b>${n0(D.meta.customers)}</b>`;
+  $('#sc-ctry').innerHTML = `<span>Countries</span><b>${D.meta.countries}</b>`;
+}
+
+/* ---------- overview ---------- */
+function overview() {
+  const k = D.kpis, r = D.risk, c = D.cohort, a = D.actions;
+  const F = [
+    {chip:'Revenue', fig:`+${k.net_sales_yoy}%`, txt:`Sales grew while orders fell ${Math.abs(k.orders_yoy)}%. A ${k.aov_yoy}% bigger average order drove all of the growth.`, go:'revenue'},
+    {chip:'Customers', fig:`${r.churn_rate}%`, txt:`of FY2010 customers never came back, taking ${gbp(r.churned_fy10_revenue)} of annual revenue with them.`, go:'customers', hot:1},
+    {chip:'Retention', fig:`${c.new_m1}%`, txt:`of new customers buy again in month 1. The second order decides who becomes loyal.`, go:'retention'},
+    {chip:'Concentration', fig:`${D.pareto.top1}%`, txt:`of revenue comes from the top 1% of customers (about 43 accounts). Losing one would erase a year of growth.`, go:'revenue'},
+  ];
+  $('#finds').innerHTML = F.map(f => `
+    <div class="find${f.hot ? ' hot' : ''}">
+      <div class="row"><span class="chip">${f.chip}</span></div>
+      <div class="fig num">${f.fig}</div>
+      <p>${f.txt}</p>
+      <button type="button" class="go" data-goto="${f.go}">Open ${VIEWS.find(v => v.id === f.go).label} ${icon('arrowr', 13)}</button>
+    </div>`).join('');
+  const mx = Math.max(...a.items.map(i => i.value));
+  $('#opp').innerHTML = `
+    <h3>Opportunity identified</h3>
+    <div class="big num">${gbp(a.total)}</div>
+    <p>A year from three fixes, <b>${a.vs_growth}×</b> FY2011's entire sales growth of ${gbp(a.yoy_growth_value)}.</p>
+    ${a.items.map(i => `<div class="orow"><span>${esc(i.title)}</span><b class="num">+${gbp(i.value)}</b><span class="tr"><div style="width:${i.value / mx * 100}%"></div></span></div>`).join('')}
+    <button type="button" class="cta" data-goto="plan">Open action plan ${icon('arrowr', 14)}</button>`;
+}
+
+/* ---------- segment panel ---------- */
+const SEG = {
+  'Champions':            {g:'Healthy', ab:'CH', play:'Protect: named account manager and first look at the Q4 range'},
+  'Loyal':                {g:'Healthy', ab:'LO', play:'Grow: volume-tier pricing and bundles of high-lift pairs'},
+  'New & Promising':      {g:'Healthy', ab:'NP', play:'Convert: second-order offer within 30 days of the first'},
+  'Need Attention':       {g:'Watch',   ab:'NA', play:'Nudge: reorder reminder when silence passes 2× their usual gap'},
+  'At Risk – High Value': {g:'Watch',   ab:'RH', play:'Win back: personal call plus the new-season catalogue'},
+  'At Risk':              {g:'Watch',   ab:'AR', play:'Win back: time-limited reorder discount'},
+  'Hibernating':          {g:'Gone',    ab:'HB', play:'Reactivate by low-cost email only'},
+  'Lost':                 {g:'Gone',    ab:'LS', play:'Suppress from paid campaigns; keep in newsletters'},
+};
+let segFilter = 'All', segSel = 'At Risk – High Value';
+function segments() {
+  const groups = ['All', 'Healthy', 'Watch', 'Gone'];
+  $('#segtabs').innerHTML = groups.map(g => {
+    const n = g === 'All' ? D.segments.length : D.segments.filter(s => SEG[s.name].g === g).length;
+    return `<button type="button" id="tab-${g}" aria-pressed="${g === segFilter}" data-g="${g}">${g}<span class="n">${n}</span></button>`;
+  }).join('');
+  const list = D.segments.filter(s => segFilter === 'All' || SEG[s.name].g === segFilter);
+  if (!list.find(s => s.name === segSel)) segSel = list[0].name;
+  $('#seglist').innerHTML = list.map(s => `
+    <button type="button" class="seg" aria-pressed="${s.name === segSel}" data-s="${esc(s.name)}">
+      <span class="av">${SEG[s.name].ab}</span>
+      <span class="nm"><b>${esc(s.name)}</b><span class="num">${n0(s.customers)} customers · ${s.cust_share}%</span></span>
+      <span class="st">${SEG[s.name].g}</span>
+      <span class="amt num">${gbp(s.revenue)}</span>
+    </button>`).join('');
+  const s = D.segments.find(x => x.name === segSel);
+  const od = D.risk.overdue_by_segment[s.name] || 0;
+  $('#detail').innerHTML = `
+    <div class="d-row">
+      <div><div class="d-lab">Segment</div><div class="d-title"># ${esc(s.name)} <span class="st">${SEG[s.name].g}</span></div></div>
+      <div><div class="d-lab">Customers</div><div class="d-big num">${n0(s.customers)}</div></div>
+      <div><div class="d-lab">Median days since last order</div><div class="d-big num">${s.recency} days</div></div>
+    </div>
+    <div class="tiles">
+      <div class="tile"><span class="corner">${icon('arrowur', 14)}</span><b class="num">${gbp(s.revenue)}</b><span>Lifetime revenue</span></div>
+      <div class="tile"><span class="corner">${icon('arrowur', 14)}</span><b class="num">${gbp(s.t12)}</b><span>Last 12 months</span></div>
+      <div class="tile"><span class="corner">${icon('arrowur', 14)}</span><b class="num">${s.orders}</b><span>Median orders</span></div>
+      <div class="tile dash"><b class="num">${od}</b><span>Overdue right now</span></div>
+    </div>
+    <div class="d-foot">
+      <div><div class="d-lab">Share of customers</div><div class="d-big num">${s.cust_share}%</div></div>
+      <div><div class="d-lab">Share of revenue</div><div class="d-big num">${s.rev_share}%</div></div>
+      <div class="play"><small>Recommended play</small>${esc(SEG[s.name].play)}</div>
+    </div>`;
+}
+
+/* ---------- monthly line chart ---------- */
+function monthly() {
+  const m = D.monthly, W = 720, H = 250, L = 52, R = 70, T = 14, B = 26;
+  const ymax = 1600000, x = i => L + i * (W - L - R) / 11, y = v => T + (H - T - B) * (1 - v / ymax);
+  let g = '';
+  for (let v = 0; v <= ymax; v += 400000) g += `<line class="gl" x1="${L}" x2="${W - R}" y1="${y(v)}" y2="${y(v)}"/><text class="ax" x="${L - 8}" y="${y(v) + 3.5}" text-anchor="end">${v ? '£' + (v / 1e6).toFixed(1) + 'M' : '£0'}</text>`;
+  m.labels.forEach((l, i) => g += `<text class="ax" x="${x(i)}" y="${H - 6}" text-anchor="middle">${l}</text>`);
+  const line = a => a.map((v, i) => (i ? 'L' : 'M') + x(i).toFixed(1) + ' ' + y(v).toFixed(1)).join(' ');
+  const area = line(m.fy2011) + ` L${x(11)} ${y(0)} L${x(0)} ${y(0)} Z`;
+  g += `<rect x="${x(8.5)}" y="${T}" width="${x(11) - x(8.5) + 12}" height="${H - T - B}" rx="10" style="fill:var(--accent-softer)"/>
+        <text class="ax" x="${x(9.6)}" y="${H - B - 8}" text-anchor="middle" style="font-weight:600;fill:var(--accent)">Q4 peak · ${D.kpis.q4_share}% of year</text>`;
+  g += `<path d="${area}" style="fill:url(#gm)"/>
+        <path d="${line(m.fy2010)}" style="fill:none;stroke:var(--base);stroke-width:2;stroke-dasharray:5 4"/>
+        <path d="${line(m.fy2011)}" style="fill:none;stroke:var(--accent);stroke-width:2.5;stroke-linejoin:round"/>`;
+  m.fy2011.forEach((v, i) => g += `<circle cx="${x(i)}" cy="${y(v)}" r="${i === 11 ? 6 : 3.5}" style="fill:${i === 11 ? 'var(--accent)' : 'var(--card)'};stroke:${i === 11 ? 'var(--card)' : 'var(--accent)'};stroke-width:2"/>`);
+  g += `<text class="lbl" x="${x(11) + 12}" y="${y(m.fy2011[11]) + 4}">${gbp(m.fy2011[11], 2)}</text>
+        <text class="ax" x="${x(11) + 12}" y="${y(m.fy2010[11]) + 18}">FY2010</text>`;
+  g += `<line class="guide live" x1="0" x2="0" y1="${T}" y2="${H - B}" style="opacity:0"/>`;
+  m.labels.forEach((l, i) => {
+    const d = (m.fy2011[i] - m.fy2010[i]) / m.fy2010[i] * 100;
+    g += `<rect class="hit" x="${x(i) - (W - L - R) / 22}" y="${T}" width="${(W - L - R) / 11}" height="${H - T - B}" data-gx="${x(i)}"
+      data-tip="<b>${l} ${i === 0 ? 2010 : 2011}</b>FY2011 ${gbp(m.fy2011[i], 2)}<br>FY2010 ${gbp(m.fy2010[i], 2)} (${d >= 0 ? '+' : ''}${d.toFixed(1)}%)<br>${n0(m.orders2011[i])} orders · ${n0(m.customers2011[i])} customers"/>`;
+  });
+  $('#ch-monthly').innerHTML = `<svg class="chart" viewBox="0 0 ${W} ${H}" role="img" aria-label="Monthly net sales FY2011 vs FY2010">
+    <defs><linearGradient id="gm" x1="0" x2="0" y1="0" y2="1"><stop offset="0" style="stop-color:var(--accent);stop-opacity:.22"/><stop offset="1" style="stop-color:var(--accent);stop-opacity:0"/></linearGradient></defs>${g}</svg>`;
+  const k = D.kpis;
+  insight('#in-monthly', `Sales grew <b>${k.net_sales_yoy}%</b> while orders fell <b>${Math.abs(k.orders_yoy)}%</b>: the gain came from a <b>${k.aov_yoy}% larger average order</b> (${gbp(k.aov)}). Sep–Nov alone brings <b>${k.q4_share}%</b> of annual sales, so stock and staffing must be locked in by August.`);
+}
+function revSwitch(w) {
+  $('#rv-m').setAttribute('aria-pressed', !w); $('#rv-w').setAttribute('aria-pressed', w);
+  $('#rv-monthly').hidden = w; $('#rv-week').hidden = !w;
+  $('#rv-title').textContent = w ? 'When orders arrive' : 'Monthly net sales';
+  $('#rv-sub').textContent = w ? 'FY2011 revenue by weekday and hour' : 'FY2011 against FY2010, £ per month';
+}
+
+/* ---------- Pareto ---------- */
+function pareto() {
+  const p = D.pareto, W = 340, H = 240, L = 38, R = 12, T = 12, B = 30;
+  const x = v => L + v / 100 * (W - L - R), y = v => T + (H - T - B) * (1 - v / 100);
+  let g = '';
+  [0, 25, 50, 75, 100].forEach(v => g += `<line class="gl" x1="${L}" x2="${W - R}" y1="${y(v)}" y2="${y(v)}"/><text class="ax" x="${L - 6}" y="${y(v) + 3.5}" text-anchor="end">${v}%</text>`);
+  [0, 20, 50, 100].forEach(v => g += `<text class="ax" x="${x(v)}" y="${H - 12}" text-anchor="middle">${v}%</text>`);
+  g += `<text class="ax" x="${(L + W - R) / 2}" y="${H}" text-anchor="middle">share of customers</text>`;
+  const path = p.x.map((v, i) => (i ? 'L' : 'M') + x(v).toFixed(1) + ' ' + y(p.y[i]).toFixed(1)).join(' ');
+  g += `<path d="${path} L${x(100)} ${y(0)} L${x(0)} ${y(0)} Z" style="fill:url(#gp)"/>
+        <line x1="${x(0)}" y1="${y(0)}" x2="${x(100)}" y2="${y(100)}" style="stroke:var(--base);stroke-dasharray:4 4"/>
+        <path d="${path}" style="fill:none;stroke:var(--accent);stroke-width:2.5"/>`;
+  [[1, p.top1, 'Top 1%'], [20, p.top20, 'Top 20%']].forEach(([a, b, t]) => {
+    g += `<line x1="${x(a)}" x2="${x(a)}" y1="${y(b)}" y2="${y(0)}" style="stroke:var(--accent);stroke-dasharray:2 3;opacity:.6"/>
+      <circle cx="${x(a)}" cy="${y(b)}" r="5.5" style="fill:var(--accent);stroke:var(--card);stroke-width:2" data-tip="<b>${t} of customers</b>${b}% of FY2011 revenue"/>
+      <text class="lbl" x="${x(a) + 9}" y="${y(b) + (a === 1 ? 14 : -8)}">${t} → ${b}%</text>`;
+  });
+  p.x.forEach((v, i) => { if (v > 0) g += `<circle class="hit" cx="${x(v)}" cy="${y(p.y[i])}" r="9" data-tip="<b>Top ${v}% of customers</b>${p.y[i]}% of revenue"/>`; });
+  $('#ch-pareto').innerHTML = `<svg class="chart" viewBox="0 0 ${W} ${H}" role="img" aria-label="Pareto curve of revenue by customers">
+    <defs><linearGradient id="gp" x1="0" x2="0" y1="0" y2="1"><stop offset="0" style="stop-color:var(--accent);stop-opacity:.2"/><stop offset="1" style="stop-color:var(--accent);stop-opacity:0"/></linearGradient></defs>${g}</svg>`;
+  insight('#in-pareto', `About 43 accounts (top 1%) bring <b>${p.top1}%</b> of revenue; the top 10 alone bring <b>${p.top10_customers_share}%</b>. Losing one key account would erase a year of growth.`);
+}
+
+const heat = t => {
+  t = Math.max(0, Math.min(1, t));
+  return { bg: `color-mix(in oklab, var(--accent) ${Math.round(6 + t * 94)}%, var(--card))`, fg: t > 0.5 ? 'var(--on-accent)' : 'var(--ink)' };
+};
+
+/* ---------- cohort ---------- */
+function cohort() {
+  const c = D.cohort;
+  let h = '<thead><tr><th class="rl">Cohort</th><th>New</th>' + Array.from({length: 12}, (_, i) => `<th>M${i + 1}</th>`).join('') + '</tr></thead><tbody>';
+  c.rows.forEach((r, ri) => {
+    h += `<tr><th class="rl">${r.cohort}${ri === 0 ? ' *' : ''}</th><td class="size num">${n0(r.size)}</td>`;
+    for (let i = 1; i <= 12; i++) {
+      const v = r.values[i];
+      if (v == null) { h += '<td class="empty"></td>'; continue; }
+      const { bg, fg } = heat(v / 45);
+      h += `<td style="background:${bg};color:${fg}" data-tip="<b>${r.cohort} cohort · month ${i}</b>${v}% of ${n0(r.size)} customers bought">${Math.round(v)}</td>`;
+    }
+    h += '</tr>';
+  });
+  h += '<tr><th class="rl">New-cohort avg</th><td class="size">—</td>' + c.avg_curve.slice(1).map((v, i) => `<td style="background:var(--panel);color:var(--panel-ink)" data-tip="<b>Average, month ${i + 1}</b>${v}% (Jan–Nov 2010 cohorts)">${Math.round(v)}</td>`).join('') + '</tr></tbody>';
+  $('#cohort').innerHTML = h;
+  const ramp = [[0,10,'0–10%'],[10,20,'10–20%'],[20,30,'20–30%'],[30,40,'30–40%'],[40,45,'40%+']];
+  $('#key-cohort').innerHTML = `
+    <span class="k"><b>Colour = % who bought again</b></span>
+    <span class="ramp">${ramp.map(([a, b, t]) => { const {bg} = heat((a + b) / 2 / 45); return `<span><i class="sw" style="background:${bg}"></i>${t}</span>`; }).join('')}</span>
+    <span class="k"><i class="sw" style="background:var(--panel)"></i>Average of new customers</span>
+    <span class="k"><i class="sw" style="background:var(--accent-softer)"></i>New = first-time buyers that month</span>
+    <span class="k">M1–M12 = months after first purchase</span>`;
+  insight('#in-cohort', `* Dec 2009 is the existing customer base, which still buys at <b>${c.dec09_m12}%</b> a year later. Genuinely new customers sit near <b>${c.new_m1}%</b> from month 1 onwards: loyalty is won or lost on the <b>second order</b>.`);
+}
+
+/* ---------- first order vs repeat ---------- */
+function firstOrder() {
+  const f = D.clv.by_first_order, W = 360, H = 250, L = 34, R = 8, T = 22, B = 46;
+  const bw = (W - L - R) / f.length, y = v => T + (H - T - B) * (1 - v / 100);
+  let g = '';
+  [0, 25, 50, 75, 100].forEach(v => g += `<line class="gl" x1="${L}" x2="${W - R}" y1="${y(v)}" y2="${y(v)}"/><text class="ax" x="${L - 6}" y="${y(v) + 3.5}" text-anchor="end">${v}%</text>`);
+  f.forEach((d, i) => {
+    const x = L + i * bw + bw * 0.16, w = bw * 0.68, top = y(d.repeat), last = i === f.length - 1;
+    g += `<g data-tip="<b>${d.band} first order</b>median first order ${gbp(d.first)}<br>${d.repeat}% reorder within 12 months<br>median 12-month value ${gbp(d.clv)}">
+      <path d="M${x} ${y(0)} V${top + 6} Q${x} ${top} ${x + 6} ${top} H${x + w - 6} Q${x + w} ${top} ${x + w} ${top + 6} V${y(0)} Z" style="fill:${last ? 'var(--accent)' : 'color-mix(in oklab,var(--accent) ' + (30 + i * 18) + '%,var(--card))'}"/>
+      <text class="lbl" x="${x + w / 2}" y="${top - 6}" text-anchor="middle">${d.repeat}%</text>
+      <text class="ax" x="${x + w / 2}" y="${H - 28}" text-anchor="middle">${d.band}</text>
+      <text class="ax" x="${x + w / 2}" y="${H - 14}" text-anchor="middle" style="fill:var(--ink-2);font-weight:600">CLV ${gbp(d.clv)}</text></g>`;
+  });
+  $('#ch-first').innerHTML = `<svg class="chart" viewBox="0 0 ${W} ${H}" role="img" aria-label="Repeat rate by first order size">${g}</svg>`;
+  const c = D.clv;
+  insight('#in-first', `Top-quartile first orders reorder <b>${f[3].repeat}%</b> of the time vs <b>${f[0].repeat}%</b> for the smallest (χ² p &lt; 0.001, n = ${n0(c.n)}). A repeater is worth <b>${gbp(c.repeaters_clv)}</b> in year one; a one-time buyer <b>${gbp(c.one_timers_clv)}</b>.`);
+}
+
+/* ---------- weekday x hour ---------- */
+function week() {
+  const w = D.heatmap, mx = Math.max(...w.values.flat());
+  let h = '<thead><tr><th class="rl"></th>' + w.hours.map(x => `<th>${x}h</th>`).join('') + '</tr></thead><tbody>';
+  w.present_days.forEach((d, ri) => {
+    h += `<tr><th class="rl">${w.days[d]}</th>` + w.values[ri].map((v, i) => {
+      const { bg, fg } = heat(v / mx);
+      return `<td style="background:${bg};color:${fg}" data-tip="<b>${w.days[d]} ${w.hours[i]}:00–${w.hours[i] + 1}:00</b>${gbp(v)} FY2011 revenue">${v >= mx * 0.55 ? gbp(v, 0).replace('£', '') : ''}</td>`;
+    }).join('') + '</tr>';
+  });
+  $('#week').innerHTML = h + '</tbody>';
+  $('#key-week').innerHTML = `<span class="k"><b>Colour = revenue in that hour</b></span>
+    <span class="ramp">${[0.05, 0.3, 0.55, 0.8, 1].map((t, i) => `<span><i class="sw" style="background:${heat(t).bg}"></i>${['Very low','Low','Medium','High','Peak'][i]}</span>`).join('')}</span>
+    <span class="k">Figures shown in £K on the busiest hours · hover any cell for the exact value</span>`;
+  insight('#in-week', `Demand peaks <b>${w.peak.day} around ${w.peak.hour}:00</b> and is concentrated 10:00–16:00. Thursday and Tuesday are the biggest days, there is no Saturday trading and Sunday is light, so campaigns and reorder reminders should land on <b>Tuesday and Thursday mornings</b>.`);
+}
+
+/* ---------- returns / markets / basket ---------- */
+function lists() {
+  const r = D.returns.top_products, rmx = Math.max(...r.map(x => x.returned));
+  $('#ch-returns').innerHTML = r.slice(0, 8).map(p => `
+    <div class="brow" data-tip="<b>${esc(p.name)}</b>${gbp(p.returned)} returned · ${p.rate}% of gross sales value">
+      <span class="nm">${esc(p.name)}</span><span class="track"><span class="fill" style="width:${p.returned / rmx * 100}%"></span></span>
+      <span class="v num">${gbp(p.returned, 1)} <span class="chip ${p.rate >= 20 ? 'bad' : p.rate >= 10 ? 'warn' : ''}">${p.rate}%</span></span></div>`).join('');
+  insight('#in-returns', `Returns fell to <b>${D.kpis.return_rate}%</b> of gross sales (${gbp(D.kpis.returns_value)}), but some items fail badly: the Pantry Chopping Board loses <b>45%</b> of its sales to returns.`);
+
+  const m = D.countries.top, mmx = Math.max(...m.map(x => x.revenue));
+  $('#ch-markets').innerHTML = m.map(c => `
+    <div class="brow" data-tip="<b>${esc(c.name)}</b>${gbp(c.revenue)} FY2011 · ${c.yoy >= 0 ? '+' : ''}${c.yoy}% vs FY2010">
+      <span class="nm">${esc(c.name === 'EIRE' ? 'Ireland' : c.name)}</span><span class="track"><span class="fill" style="width:${c.revenue / mmx * 100}%"></span></span>
+      <span class="v num">${gbp(c.revenue)} <span class="chip ${c.yoy >= 0 ? 'good' : 'bad'}">${c.yoy >= 0 ? '+' : ''}${Math.round(c.yoy)}%</span></span></div>`).join('');
+  insight('#in-markets', `The UK is <b>${D.countries.uk_share}%</b> of sales. France (+41%) and Australia are growing fast, while Ireland fell <b>25%</b>: a few large Irish accounts likely went quiet.`);
+
+  const b = D.basket.pairs.slice(0, 5), bmx = Math.max(...b.map(x => x.lift));
+  $('#ch-basket').innerHTML = b.map(p => `
+    <div class="pair" data-tip="<b>${esc(p.a)} + ${esc(p.b)}</b>Lift ${p.lift}× · ${p.conf}% confidence · in ${p.support}% of baskets">
+      <span class="t">${esc(p.a)}<span>+</span>${esc(p.b)}</span><span class="chip">${p.lift}×</span>
+      <span class="m"><span class="track"><span class="fill" style="width:${p.lift / bmx * 100}%"></span></span>${p.conf}% conf.</span></div>`).join('');
+  insight('#in-basket', `From ${n0(D.basket.baskets)} FY2011 baskets. Party sets and Feltcraft ranges sell as collections: pre-built <b>bundles</b> are an easy basket-size lever.`);
+}
+
+/* ---------- action plan ---------- */
+function plan() {
+  const a = D.actions, g = a.yoy_growth_value, mx = a.total;
+  const bullets = [
+    ['Weekly overdue list from the RFM model', 'Call the top 100 (' + gbp(D.risk.overdue_top100_value) + ' a year)', 'Reorder reminder at 2× usual gap'],
+    ['Second-order offer within 30 days', 'Push larger first baskets with bundles', 'Track month-1 return rate weekly'],
+    ['Audit descriptions and photos', 'Quality check with suppliers', 'Delist if return rate stays above 20%'],
+  ];
+  $('#plan').innerHTML = `
+    <div>
+      <h2>Opportunity identified</h2>
+      <div class="big num">${gbp(a.total)}</div>
+      <p>Three fixes worth <b style="color:var(--panel-ink)">${a.vs_growth}×</b> this year's entire sales growth. Estimates use conservative assumptions shown on each card.</p>
+      <div class="cmp">
+        <div class="row"><span>FY2011 growth</span><span class="tr"><div style="width:${g / mx * 100}%;background:var(--base)"></div></span><b class="num">${gbp(g)}</b></div>
+        <div class="row"><span>Opportunity</span><span class="tr"><div style="width:100%;background:linear-gradient(90deg,var(--accent),var(--accent-2))"></div></span><b class="num">${gbp(a.total)}</b></div>
+      </div>
+    </div>
+    <div class="acts">${a.items.map((it, i) => `
+      <article class="act"><span class="ix">${i + 1}</span><h3>${esc(it.title)}</h3><div class="val num">+${gbp(it.value)}</div>
+        <p>${esc(it.assumption)}</p><ul>${bullets[i].map(b => `<li>${esc(b)}</li>`).join('')}</ul></article>`).join('')}</div>`;
+  $('#clean').innerHTML = (D.cleaning || []).map(r => `<li>${esc(r.rule)}: <b class="num">${n0(r.rows_removed)}</b></li>`).join('');
+}
+
+/* ---------- clicks ---------- */
+document.addEventListener('click', e => {
+  const nav = e.target.closest('[data-view]');
+  if (nav) { show(nav.dataset.view); return; }
+  const go = e.target.closest('[data-goto]');
+  if (go) { show(go.dataset.goto); $('#t-' + go.dataset.goto).focus(); return; }
+  const rv = e.target.closest('[data-rv]');
+  if (rv) { revSwitch(rv.dataset.rv === 'w'); return; }
+  const t = e.target.closest('#segtabs button');
+  if (t) { segFilter = t.dataset.g; segments(); $('#tab-' + segFilter).focus(); return; }
+  const s = e.target.closest('.seg');
+  if (s) { segSel = s.dataset.s; segments(); document.querySelector(`.seg[data-s="${CSS.escape(segSel)}"]`)?.focus(); }
+});
+
+/* ---------- theme toggle ---------- */
+$('#theme').addEventListener('click', () => {
+  const root = document.documentElement;
+  const dark = root.dataset.theme ? root.dataset.theme === 'dark' : matchMedia('(prefers-color-scheme: dark)').matches;
+  root.dataset.theme = dark ? 'light' : 'dark';
+  try { localStorage.setItem('rp-theme', root.dataset.theme); } catch (e) {}
+});
+try { const t = localStorage.getItem('rp-theme'); if (t) document.documentElement.dataset.theme = t; } catch (e) {}
+
+kpis(); overview(); segments(); monthly(); pareto(); cohort(); firstOrder(); week(); lists(); plan();
+let start = (location.hash || '').slice(1);
+if (!start) { try { start = localStorage.getItem('rp-view') || ''; } catch (e) {} }
+show(start || 'overview');
+</script>

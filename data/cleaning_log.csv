@@ -1,0 +1,8 @@
+rule,rows_before,rows_after,rows_removed
+Drop exact duplicate rows,1067371,1033036,34335
+Returns: drop cancellations of the giant outlier orders,17914,17912,2
+Remove cancellation invoices (prefix C),1033036,1013932,19104
+Remove bad-debt adjustments (prefix A),1013932,1013926,6
+"Remove non-product codes (postage, fees, samples)",1013926,1009303,4623
+Remove zero/negative quantity or price,1009303,1003340,5963
+"Remove extreme quantity outliers (>=20,000 units)",1003340,1003338,2

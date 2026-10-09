@@ -1,0 +1,875 @@
+{
+ "kpis": {
+  "net_sales": 9555545.0,
+  "net_sales_prev": 9396642.0,
+  "net_sales_yoy": 1.7,
+  "orders": 18956,
+  "orders_yoy": -4.0,
+  "aov": 504.09,
+  "aov_yoy": 5.9,
+  "customers": 4292,
+  "customers_yoy": 1.3,
+  "repeat_rate": 63.9,
+  "repeat_rate_prev": 66.4,
+  "returns_value": 224626.0,
+  "return_rate": 2.3,
+  "return_rate_prev": 2.5,
+  "guest_share": 14.7,
+  "q4_share": 37.5
+ },
+ "monthly": {
+  "labels": [
+   "Dec",
+   "Jan",
+   "Feb",
+   "Mar",
+   "Apr",
+   "May",
+   "Jun",
+   "Jul",
+   "Aug",
+   "Sep",
+   "Oct",
+   "Nov"
+  ],
+  "fy2010": [
+   797901.0,
+   612297.0,
+   537910.0,
+   761706.0,
+   646341.0,
+   643492.0,
+   696583.0,
+   632994.0,
+   674038.0,
+   869243.0,
+   1094436.0,
+   1429701.0
+  ],
+  "fy2011": [
+   775638.0,
+   593197.0,
+   507800.0,
+   689834.0,
+   515378.0,
+   739953.0,
+   737559.0,
+   688219.0,
+   724217.0,
+   1028320.0,
+   1103314.0,
+   1452116.0
+  ],
+  "orders2011": [
+   1550,
+   1080,
+   1093,
+   1440,
+   1235,
+   1668,
+   1525,
+   1452,
+   1339,
+   1818,
+   2005,
+   2751
+  ],
+  "customers2011": [
+   884,
+   738,
+   757,
+   973,
+   853,
+   1054,
+   990,
+   946,
+   933,
+   1259,
+   1361,
+   1660
+  ]
+ },
+ "cohort": {
+  "rows": [
+   {
+    "cohort": "Dec 09",
+    "size": 951,
+    "values": [
+     100.0,
+     35.0,
+     33.3,
+     42.5,
+     37.9,
+     36.0,
+     37.6,
+     34.4,
+     33.8,
+     36.2,
+     42.2,
+     49.6,
+     37.6
+    ]
+   },
+   {
+    "cohort": "Jan 10",
+    "size": 368,
+    "values": [
+     100.0,
+     21.5,
+     32.1,
+     31.5,
+     27.2,
+     31.0,
+     26.9,
+     23.4,
+     28.5,
+     32.6,
+     31.0,
+     17.9,
+     22.8
+    ]
+   },
+   {
+    "cohort": "Feb 10",
+    "size": 375,
+    "values": [
+     100.0,
+     23.5,
+     22.7,
+     29.3,
+     24.5,
+     19.7,
+     19.2,
+     28.8,
+     25.6,
+     27.7,
+     11.5,
+     12.5,
+     15.2
+    ]
+   },
+   {
+    "cohort": "Mar 10",
+    "size": 441,
+    "values": [
+     100.0,
+     19.1,
+     23.1,
+     24.3,
+     23.1,
+     20.4,
+     24.7,
+     30.6,
+     27.7,
+     10.9,
+     11.3,
+     14.5,
+     20.0
+    ]
+   },
+   {
+    "cohort": "Apr 10",
+    "size": 294,
+    "values": [
+     100.0,
+     19.1,
+     19.1,
+     16.0,
+     18.4,
+     22.1,
+     27.6,
+     26.5,
+     10.5,
+     10.9,
+     7.5,
+     14.0,
+     14.3
+    ]
+   },
+   {
+    "cohort": "May 10",
+    "size": 255,
+    "values": [
+     100.0,
+     15.7,
+     16.9,
+     17.6,
+     17.6,
+     25.5,
+     21.2,
+     12.6,
+     5.9,
+     8.2,
+     11.4,
+     13.3,
+     15.3
+    ]
+   },
+   {
+    "cohort": "Jun 10",
+    "size": 267,
+    "values": [
+     100.0,
+     17.6,
+     18.7,
+     20.6,
+     23.2,
+     28.5,
+     12.7,
+     9.0,
+     8.2,
+     11.2,
+     10.5,
+     13.9,
+     15.0
+    ]
+   },
+   {
+    "cohort": "Jul 10",
+    "size": 185,
+    "values": [
+     100.0,
+     15.7,
+     18.4,
+     29.7,
+     29.2,
+     14.1,
+     11.3,
+     14.6,
+     14.6,
+     11.3,
+     13.5,
+     14.6,
+     13.0
+    ]
+   },
+   {
+    "cohort": "Aug 10",
+    "size": 163,
+    "values": [
+     100.0,
+     19.6,
+     28.8,
+     32.5,
+     16.6,
+     11.7,
+     9.8,
+     12.9,
+     13.5,
+     12.9,
+     12.9,
+     11.7,
+     14.7
+    ]
+   },
+   {
+    "cohort": "Sep 10",
+    "size": 239,
+    "values": [
+     100.0,
+     23.0,
+     23.4,
+     13.0,
+     8.8,
+     10.5,
+     13.8,
+     9.6,
+     13.0,
+     13.0,
+     12.1,
+     10.0,
+     22.6
+    ]
+   },
+   {
+    "cohort": "Oct 10",
+    "size": 375,
+    "values": [
+     100.0,
+     25.9,
+     14.7,
+     12.5,
+     8.8,
+     8.3,
+     13.1,
+     13.9,
+     10.7,
+     9.3,
+     10.7,
+     12.8,
+     19.2
+    ]
+   },
+   {
+    "cohort": "Nov 10",
+    "size": 326,
+    "values": [
+     100.0,
+     17.5,
+     9.5,
+     9.5,
+     7.7,
+     8.9,
+     12.9,
+     10.1,
+     8.6,
+     9.2,
+     11.0,
+     14.7,
+     25.1
+    ]
+   }
+  ],
+  "avg_curve": [
+   100.0,
+   19.8,
+   20.7,
+   21.5,
+   18.6,
+   18.2,
+   17.6,
+   17.4,
+   15.2,
+   14.3,
+   13.0,
+   13.6,
+   17.9
+  ],
+  "dec09_m12": 37.6,
+  "new_m1": 19.8,
+  "new_m3": 21.5
+ },
+ "segments": [
+  {
+   "name": "Champions",
+   "customers": 1565,
+   "cust_share": 26.7,
+   "rev_share": 71.6,
+   "revenue": 12053606,
+   "t12": 6387986,
+   "recency": 17,
+   "orders": 9
+  },
+  {
+   "name": "Loyal",
+   "customers": 947,
+   "cust_share": 16.2,
+   "rev_share": 13.2,
+   "revenue": 2218120,
+   "t12": 1067737,
+   "recency": 79,
+   "orders": 4
+  },
+  {
+   "name": "New & Promising",
+   "customers": 560,
+   "cust_share": 9.6,
+   "rev_share": 1.4,
+   "revenue": 231565,
+   "t12": 200838,
+   "recency": 25,
+   "orders": 2
+  },
+  {
+   "name": "Need Attention",
+   "customers": 440,
+   "cust_share": 7.5,
+   "rev_share": 1.1,
+   "revenue": 181147,
+   "t12": 154332,
+   "recency": 96,
+   "orders": 1
+  },
+  {
+   "name": "At Risk \u2013 High Value",
+   "customers": 444,
+   "cust_share": 7.6,
+   "rev_share": 7.8,
+   "revenue": 1314732,
+   "t12": 194360,
+   "recency": 360,
+   "orders": 5
+  },
+  {
+   "name": "At Risk",
+   "customers": 239,
+   "cust_share": 4.1,
+   "rev_share": 1.5,
+   "revenue": 250057,
+   "t12": 49793,
+   "recency": 387,
+   "orders": 3
+  },
+  {
+   "name": "Hibernating",
+   "customers": 715,
+   "cust_share": 12.2,
+   "rev_share": 1.6,
+   "revenue": 268865,
+   "t12": 128228,
+   "recency": 313,
+   "orders": 1
+  },
+  {
+   "name": "Lost",
+   "customers": 942,
+   "cust_share": 16.1,
+   "rev_share": 1.8,
+   "revenue": 304837,
+   "t12": 0,
+   "recency": 548,
+   "orders": 1
+  }
+ ],
+ "risk": {
+  "customers": 683,
+  "t12_revenue": 244152,
+  "share_of_t12": 3.0,
+  "high_value_customers": 444,
+  "high_value_t12": 194360,
+  "median_days_silent": 372,
+  "win_back": {
+   "10": 24415,
+   "20": 48830,
+   "30": 73246
+  },
+  "overdue_customers": 601,
+  "overdue_value": 601086,
+  "overdue_share": 7.3,
+  "overdue_top100_value": 353999,
+  "overdue_median_gap": 40,
+  "overdue_median_silence": 196,
+  "save": {
+   "10": 60109,
+   "25": 150272,
+   "50": 300543
+  },
+  "overdue_bands": [
+   {
+    "band": "60\u2013120d",
+    "customers": 129,
+    "value": 202379
+   },
+   {
+    "band": "120\u2013180d",
+    "customers": 135,
+    "value": 133688
+   },
+   {
+    "band": "180\u2013270d",
+    "customers": 186,
+    "value": 199656
+   },
+   {
+    "band": "270\u2013365d",
+    "customers": 151,
+    "value": 65364
+   }
+  ],
+  "overdue_by_segment": {
+   "Loyal": 230,
+   "At Risk \u2013 High Value": 179,
+   "Hibernating": 92,
+   "Need Attention": 52,
+   "At Risk": 48
+  },
+  "churned_customers": 1519,
+  "churn_rate": 35.8,
+  "churned_fy10_revenue": 1046474,
+  "new_customers_fy11": 1585
+ },
+ "pareto": {
+  "x": [
+   0,
+   1,
+   2,
+   5,
+   10,
+   15,
+   20,
+   30,
+   40,
+   50,
+   60,
+   70,
+   80,
+   90,
+   100
+  ],
+  "y": [
+   0,
+   30.5,
+   37.4,
+   49.0,
+   60.2,
+   67.9,
+   73.8,
+   82.1,
+   87.8,
+   91.8,
+   94.8,
+   96.9,
+   98.4,
+   99.5,
+   100.0
+  ],
+  "top20": 73.8,
+  "top1": 30.5,
+  "top10_customers_share": 16.7
+ },
+ "returns": {
+  "top_products": [
+   {
+    "name": "Regency Cakestand 3 Tier",
+    "returned": 9593,
+    "rate": 5.4
+   },
+   {
+    "name": "White Hanging Heart T-Light Ho",
+    "returned": 6621,
+    "rate": 6.0
+   },
+   {
+    "name": "Fairy Cake Flannel Assorted Co",
+    "returned": 6554,
+    "rate": 26.9
+   },
+   {
+    "name": "Pantry Chopping Board",
+    "returned": 4803,
+    "rate": 45.3
+   },
+   {
+    "name": "Doormat Fairy Cake",
+    "returned": 4555,
+    "rate": 16.1
+   },
+   {
+    "name": "Gin + Tonic Diet Metal Sign",
+    "returned": 3775,
+    "rate": 12.6
+   },
+   {
+    "name": "Tea Time Party Bunting",
+    "returned": 3693,
+    "rate": 22.2
+   },
+   {
+    "name": "Feltcraft Doll Molly",
+    "returned": 3510,
+    "rate": 22.9
+   }
+  ],
+  "monthly": [
+   17548.0,
+   14341.0,
+   8336.0,
+   10504.0,
+   33316.0,
+   8948.0,
+   13714.0,
+   11407.0,
+   22927.0,
+   16981.0,
+   41613.0,
+   24991.0
+  ],
+  "top8_share": 19.2,
+  "customers_returning": 1495
+ },
+ "countries": {
+  "uk_share": 84.5,
+  "intl_share": 15.5,
+  "top": [
+   {
+    "name": "Netherlands",
+    "revenue": 272161,
+    "yoy": 2.4
+   },
+   {
+    "name": "EIRE",
+    "revenue": 263710,
+    "yoy": -25.2
+   },
+   {
+    "name": "Germany",
+    "revenue": 198357,
+    "yoy": 11.5
+   },
+   {
+    "name": "France",
+    "revenue": 177954,
+    "yoy": 40.6
+   },
+   {
+    "name": "Australia",
+    "revenue": 138104,
+    "yoy": 365.1
+   },
+   {
+    "name": "Spain",
+    "revenue": 55418,
+    "yoy": 31.8
+   },
+   {
+    "name": "Switzerland",
+    "revenue": 53066,
+    "yoy": 29.6
+   },
+   {
+    "name": "Japan",
+    "revenue": 37416,
+    "yoy": 567.3
+   }
+  ]
+ },
+ "heatmap": {
+  "days": [
+   "Mon",
+   "Tue",
+   "Wed",
+   "Thu",
+   "Fri",
+   "Sat",
+   "Sun"
+  ],
+  "present_days": [
+   0,
+   1,
+   2,
+   3,
+   4,
+   6
+  ],
+  "hours": [
+   7,
+   8,
+   9,
+   10,
+   11,
+   12,
+   13,
+   14,
+   15,
+   16,
+   17,
+   18,
+   19,
+   20
+  ],
+  "values": [
+   [
+    1445.0,
+    43293.0,
+    148903.0,
+    210000.0,
+    160548.0,
+    184415.0,
+    219244.0,
+    191616.0,
+    179330.0,
+    107281.0,
+    154557.0,
+    2218.0,
+    0.0,
+    0.0
+   ],
+   [
+    1963.0,
+    70053.0,
+    179551.0,
+    248142.0,
+    274590.0,
+    248604.0,
+    227443.0,
+    187597.0,
+    287006.0,
+    161317.0,
+    50733.0,
+    15576.0,
+    0.0,
+    0.0
+   ],
+   [
+    3343.0,
+    40231.0,
+    133178.0,
+    247521.0,
+    212658.0,
+    265997.0,
+    225679.0,
+    191196.0,
+    213919.0,
+    119918.0,
+    39984.0,
+    0.0,
+    2893.0,
+    13032.0
+   ],
+   [
+    6884.0,
+    64602.0,
+    140732.0,
+    286267.0,
+    167188.0,
+    271779.0,
+    185413.0,
+    199791.0,
+    245016.0,
+    167641.0,
+    114220.0,
+    104891.0,
+    43283.0,
+    5719.0
+   ],
+   [
+    16835.0,
+    48033.0,
+    151440.0,
+    192342.0,
+    193672.0,
+    225530.0,
+    178521.0,
+    206438.0,
+    183777.0,
+    64893.0,
+    51126.0,
+    76.0,
+    373.0,
+    19.0
+   ],
+   [
+    0.0,
+    0.0,
+    779.0,
+    78736.0,
+    142278.0,
+    148044.0,
+    139867.0,
+    101443.0,
+    124535.0,
+    38386.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0
+   ]
+  ],
+  "peak": {
+   "day": "Tue",
+   "hour": 15
+  }
+ },
+ "clv": {
+  "median_clv12": 848,
+  "mean_clv12": 2268,
+  "repeat_12m": 75.2,
+  "by_first_order": [
+   {
+    "band": "Q1 small",
+    "repeat": 64.6,
+    "clv": 284,
+    "first": 117
+   },
+   {
+    "band": "Q2",
+    "repeat": 74.4,
+    "clv": 643,
+    "first": 226
+   },
+   {
+    "band": "Q3",
+    "repeat": 78.1,
+    "clv": 1008,
+    "first": 345
+   },
+   {
+    "band": "Q4 large",
+    "repeat": 83.8,
+    "clv": 2249,
+    "first": 679
+   }
+  ],
+  "chi2_p": 6.244328404586197e-24,
+  "n": 4285,
+  "repeaters_clv": 1282,
+  "one_timers_clv": 228
+ },
+ "basket": {
+  "baskets": 15455,
+  "pairs": [
+   {
+    "a": "Set/6 Red Spotty Paper Cups",
+    "b": "Set/6 Red Spotty Paper Plate",
+    "lift": 47.1,
+    "conf": 82,
+    "support": 1.3
+   },
+   {
+    "a": "Feltcraft Cushion Butterfly",
+    "b": "Feltcraft Cushion Rabbit",
+    "lift": 39.3,
+    "conf": 70,
+    "support": 1.1
+   },
+   {
+    "a": "Feltcraft Princess Charlotte",
+    "b": "Feltcraft Princess Lola Doll",
+    "lift": 33.5,
+    "conf": 66,
+    "support": 1.2
+   },
+   {
+    "a": "Feltcraft Cushion Owl",
+    "b": "Feltcraft Cushion Rabbit",
+    "lift": 27.3,
+    "conf": 61,
+    "support": 1.1
+   },
+   {
+    "a": "Hand Warmer Owl Design",
+    "b": "Hand Warmer Scotty Dog Desig",
+    "lift": 22.5,
+    "conf": 56,
+    "support": 1.2
+   },
+   {
+    "a": "Jumbo Bag Vintage Christmas",
+    "b": "Jumbo Bag 50'S Christmas",
+    "lift": 22.1,
+    "conf": 62,
+    "support": 1.1
+   }
+  ]
+ },
+ "meta": {
+  "rows_raw": 1067371,
+  "rows_clean": 1003338,
+  "customers": 5852,
+  "products": 4723,
+  "countries": 43,
+  "period": "Dec 2009 \u2013 Dec 2011"
+ },
+ "actions": {
+  "yoy_growth_value": 158903,
+  "items": [
+   {
+    "title": "Win back overdue repeat customers",
+    "value": 150272,
+    "assumption": "Recover 25% of the \u00a3601,086 annual value held by 601 overdue customers"
+   },
+   {
+    "title": "Engineer the second order",
+    "value": 83530,
+    "assumption": "+5 pts of FY2011's 1,585 new customers reorder; each repeater is worth \u00a31,054 more in year one"
+   },
+   {
+    "title": "Fix the most-returned products",
+    "value": 21564,
+    "assumption": "Halve returns on the 8 products behind 19.2% of returned value"
+   }
+  ],
+  "total": 255366,
+  "vs_growth": 1.61
+ }
+}

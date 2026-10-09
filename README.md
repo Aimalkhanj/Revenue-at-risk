@@ -4,7 +4,7 @@
 
 **One answer:** £601K of annual revenue sits with 601 repeat customers who are overdue for their next order, 35.8% of last year's customers never came back, and three targeted fixes are worth **£255K — 1.6× this year's entire sales growth.**
 
-**Live dashboard:** https://YOUR-USERNAME.github.io/revenue-at-risk/
+**Live dashboard:** https://Aimalkhanj.github.io/revenue-at-risk/
 
 ![Dashboard](images/dashboard.png)
 
